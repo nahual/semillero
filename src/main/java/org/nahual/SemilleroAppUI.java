@@ -1,16 +1,12 @@
 package org.nahual;
 
-import javax.servlet.annotation.WebServlet;
-
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+
+import javax.servlet.annotation.WebServlet;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
@@ -27,14 +23,48 @@ public class SemilleroAppUI extends UI
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         setContent(layout);
+
+        Label tituloEmpleador = new Label("Nuevo Empleador");
+        tituloEmpleador.setStyleName("titulo");
+
+        layout.addComponent(tituloEmpleador);
+
+        // A FormLayout used outside the context of a Form
+        FormLayout fl = new FormLayout();
+        layout.addComponent(fl);
+
+// Make the FormLayout shrink to its contents
+        fl.setSizeUndefined();
+
+        TextField empresaTF = new TextField("Empresa");
+        fl.addComponent(empresaTF);
+
+
+        empresaTF.setRequired(true);
+        empresaTF.setRequiredError("Empresa no puede estar vacio");
+
+        TextField contactoTF = new TextField("Contacto");
+        fl.addComponent(contactoTF);
+
+        contactoTF.setRequired(true);
+        contactoTF.setRequiredError("Contacto no puede estar vacio");
+
+        TextArea observacionesTF = new TextArea("Observaciones");
+        fl.addComponent(observacionesTF);
+
+
         
-        Button button = new Button("Click Me");
+        Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
-                layout.addComponent(new Label("Thank you for clicking"));
+            public void buttonClick(Button.ClickEvent event) {
+                Window ventana = new Window("Gracias");
+                addWindow(ventana);
+                VerticalLayout contenidoVentana = new VerticalLayout();
+                contenidoVentana.addComponent(new Label("Gracias por clickear"));
+                ventana.setContent(contenidoVentana);
             }
         });
-        layout.addComponent(button);
+        fl.addComponent(button);
     }
 
 }
