@@ -1,2 +1,0 @@
-# Module org.nahual.AppWidgetSet
-# RPC service class, partial path of RPC policy file
