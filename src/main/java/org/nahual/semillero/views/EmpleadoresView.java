@@ -1,28 +1,20 @@
-package org.nahual;
+package org.nahual.semillero.views;
 
-import com.vaadin.annotations.Theme;
-import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinServlet;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 
-import javax.servlet.annotation.WebServlet;
 
-@Theme("mytheme")
-@SuppressWarnings("serial")
-public class SemilleroAppUI extends UI
-{
+public class EmpleadoresView extends VerticalLayout implements View {
 
-    @WebServlet(value = "/*", asyncSupported = true)
-    @VaadinServletConfiguration(productionMode = false, ui = SemilleroAppUI.class, widgetset = "org.nahual.AppWidgetSet")
-    public static class Servlet extends VaadinServlet {
-    }
+    public EmpleadoresView() {
+        this.setSizeFull();
+        this.setMargin(true);
+/*        Label label = new Label("Home");
+        this.addComponent(label);*/
 
-    @Override
-    protected void init(VaadinRequest request) {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
-        setContent(layout);
 
         Label tituloEmpleador = new Label("Nuevo Empleador");
         tituloEmpleador.setStyleName("titulo");
@@ -53,18 +45,22 @@ public class SemilleroAppUI extends UI
         fl.addComponent(observacionesTF);
 
 
-        
         Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
                 Window ventana = new Window("Gracias");
-                addWindow(ventana);
+                UI.getCurrent().addWindow(ventana);
                 VerticalLayout contenidoVentana = new VerticalLayout();
                 contenidoVentana.addComponent(new Label("Gracias por clickear"));
                 ventana.setContent(contenidoVentana);
             }
         });
         fl.addComponent(button);
+
+        this.addComponent(layout);
     }
 
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+    }
 }
