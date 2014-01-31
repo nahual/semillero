@@ -155,6 +155,30 @@
             <version>5.1.26</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.11</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.7.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-ehcache</artifactId>
+            <version>${version.org.hibernate}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
 	<build>
@@ -188,45 +212,45 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-			<!--<plugin>-->
-				<!--<groupId>com.vaadin</groupId>-->
-				<!--<artifactId>vaadin-maven-plugin</artifactId>-->
-				<!--<version>${vaadin.plugin.version}</version>-->
-				<!--<configuration>-->
-					<!--<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>-->
-					<!--&lt;!&ndash; <runTarget>mobilemail</runTarget> &ndash;&gt;-->
-					<!--&lt;!&ndash; We are doing "inplace" but into subdir VAADIN/widgetsets. This-->
-						<!--way compatible with Vaadin eclipse plugin. &ndash;&gt;-->
-					<!--<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets-->
-					<!--</webappDirectory>-->
-					<!--<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets-->
-					<!--</hostedWebapp>-->
-					<!--<noServer>true</noServer>-->
-					<!--&lt;!&ndash; Remove draftCompile when project is ready &ndash;&gt;-->
-					<!--<draftCompile>false</draftCompile>-->
-					<!--<compileReport>true</compileReport>-->
-					<!--<style>OBF</style>-->
-					<!--<strict>true</strict>-->
-					<!--<runTarget>http://localhost:8080/</runTarget>-->
-				<!--</configuration>-->
-				<!--<executions>-->
-					<!--<execution>-->
-						<!--<configuration>-->
-							<!--&lt;!&ndash; if you don't specify any modules, the plugin will find them &ndash;&gt;-->
-							<!--&lt;!&ndash; <modules> <module>com.vaadin.demo.mobilemail.gwt.ColorPickerWidgetSet</module>-->
-								<!--</modules> &ndash;&gt;-->
-						<!--</configuration>-->
-						<!--<goals>-->
-							<!--<goal>clean</goal>-->
-							<!--<goal>resources</goal>-->
-							<!--<goal>update-theme</goal>-->
-							<!--<goal>update-widgetset</goal>-->
-							<!--<goal>compile-theme</goal>-->
-							<!--<goal>compile</goal>-->
-						<!--</goals>-->
-					<!--</execution>-->
-				<!--</executions>-->
-			<!--</plugin>-->
+			<!--<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.plugin.version}</version>
+				<configuration>
+					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+					&lt;!&ndash; <runTarget>mobilemail</runTarget> &ndash;&gt;
+					&lt;!&ndash; We are doing "inplace" but into subdir VAADIN/widgetsets. This
+						way compatible with Vaadin eclipse plugin. &ndash;&gt;
+					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets
+					</webappDirectory>
+					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets
+					</hostedWebapp>
+					<noServer>true</noServer>
+					&lt;!&ndash; Remove draftCompile when project is ready &ndash;&gt;
+					<draftCompile>false</draftCompile>
+					<compileReport>true</compileReport>
+					<style>OBF</style>
+					<strict>true</strict>
+					<runTarget>http://localhost:8080/</runTarget>
+				</configuration>
+				<executions>
+					<execution>
+						<configuration>
+							&lt;!&ndash; if you don't specify any modules, the plugin will find them &ndash;&gt;
+							&lt;!&ndash; <modules> <module>com.vaadin.demo.mobilemail.gwt.ColorPickerWidgetSet</module>
+								</modules> &ndash;&gt;
+						</configuration>
+						<goals>
+							<goal>clean</goal>
+							<goal>resources</goal>
+							<goal>update-theme</goal>
+							<goal>update-widgetset</goal>
+							<goal>compile-theme</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>-->
 		</plugins>
 
 	</build>

@@ -3,11 +3,9 @@ package org.nahual.semillero.model;
 import javax.persistence.*;
 
 /**
- * Created with IntelliJ IDEA.
  * User: fdv
  * Date: 1/24/14
  * Time: 9:46 AM
- * To change this template use File | Settings | File Templates.
  */
 
 @Entity
