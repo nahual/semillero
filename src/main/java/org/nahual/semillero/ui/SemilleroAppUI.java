@@ -12,8 +12,7 @@ import javax.servlet.annotation.WebServlet;
 
 @Theme("mytheme")
 @SuppressWarnings("serial")
-public class SemilleroAppUI extends UI
-{
+public class SemilleroAppUI extends UI {
 
     private Navigator navigator;
     private ContenedorPrincipalUI marco;
@@ -39,4 +38,5 @@ public class SemilleroAppUI extends UI
     public Navigator getNavigator() {
         return navigator;
     }
+
 }

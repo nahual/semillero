@@ -3,6 +3,7 @@ package org.nahual.semillero.views;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import org.nahual.semillero.components.ContenedorPrincipalUI;
 
 
 public class EmpleadoresView extends VerticalLayout implements View {
@@ -10,57 +11,51 @@ public class EmpleadoresView extends VerticalLayout implements View {
     public EmpleadoresView() {
         this.setSizeFull();
         this.setMargin(true);
-/*        Label label = new Label("Home");
-        this.addComponent(label);*/
 
         final VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
+        final HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.setWidth("50%");
 
-        Label tituloEmpleador = new Label("Nuevo Empleador");
-        tituloEmpleador.setStyleName("titulo");
+        Label tituloEmpleadores = new Label("Empleadores");
+        layout.addComponent(tituloEmpleadores);
+        layout.addComponent(topLayout);
 
-        layout.addComponent(tituloEmpleador);
-
-        // A FormLayout used outside the context of a Form
-        FormLayout fl = new FormLayout();
-        layout.addComponent(fl);
-
-// Make the FormLayout shrink to its contents
-        fl.setSizeUndefined();
-
-        TextField empresaTF = new TextField("Empresa");
-        fl.addComponent(empresaTF);
-
-
-        empresaTF.setRequired(true);
-        empresaTF.setRequiredError("Empresa no puede estar vacio");
-
-        TextField contactoTF = new TextField("Contacto");
-        fl.addComponent(contactoTF);
-
-        contactoTF.setRequired(true);
-        contactoTF.setRequiredError("Contacto no puede estar vacio");
-
-        TextArea observacionesTF = new TextArea("Observaciones");
-        fl.addComponent(observacionesTF);
-
-
-        Button button = new Button("Aceptar");
-        button.addClickListener(new Button.ClickListener() {
+        /* topLayout */
+        Button botonNuevoEmpleador = new Button("Nuevo Empleador");
+        botonNuevoEmpleador.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                Window ventana = new Window("Gracias");
-                UI.getCurrent().addWindow(ventana);
-                VerticalLayout contenidoVentana = new VerticalLayout();
-                contenidoVentana.addComponent(new Label("Gracias por clickear"));
-                ventana.setContent(contenidoVentana);
+                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_NUEVO_EMPLEADOR);
             }
         });
-        fl.addComponent(button);
+        topLayout.addComponent(botonNuevoEmpleador);
+
+        /* busquedaLayout */
+        final HorizontalLayout busquedaLayout = new HorizontalLayout();
+        topLayout.addComponent(busquedaLayout);
+        TextField campoBusqueda = new TextField();
+        Button searchButton = new Button("Buscar");
+        topLayout.setComponentAlignment(busquedaLayout, Alignment.TOP_RIGHT);
+        busquedaLayout.addComponent(campoBusqueda);
+        busquedaLayout.addComponent(searchButton);
+
+        /* Tabla de empleadores */
+        Table table = new Table();
+        table.setWidth("50%");
+
+        table.addContainerProperty("Empleador", String.class, null);
+        table.addContainerProperty("Busquedas Activas", String.class, null);
+        table.addContainerProperty("Acciones", Integer.class, null);
+
+        layout.addComponent(table);
+
+        layout.setMargin(true);
+        topLayout.setMargin(true);
 
         this.addComponent(layout);
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

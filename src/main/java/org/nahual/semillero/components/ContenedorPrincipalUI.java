@@ -2,14 +2,12 @@ package org.nahual.semillero.components;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.ui.*;
-import org.nahual.semillero.views.ErrorView;
-import org.nahual.semillero.views.BusquedasView;
-import org.nahual.semillero.views.EgresadosView;
-import org.nahual.semillero.views.EmpleadoresView;
+import org.nahual.semillero.views.*;
 
 
 public class ContenedorPrincipalUI extends CustomComponent {
     public static final String VIEW_EMPLEADORES = "empleadores";
+    public static final String VIEW_NUEVO_EMPLEADOR = "nuevoEmpleador";
     private static final String VIEW_EGRESADOS = "egresados";
     private static final String VIEW_BUSQUEDAS = "busquedas";
 
@@ -26,6 +24,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
 
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
+        mainLayout.setMargin(true);
         body = new VerticalLayout();
         body.setSizeFull();
         body.setHeight("100%");
@@ -43,13 +42,16 @@ public class ContenedorPrincipalUI extends CustomComponent {
 
     public void setupMenu() {
         EgresadosView egresadosView = new EgresadosView();
-        EmpleadoresView empleadoresView = new EmpleadoresView();
+        NuevoEmpleadorView nuevoEmpleadorView = new NuevoEmpleadorView();
         BusquedasView busquedasView = new BusquedasView();
+        EmpleadoresView empleadoresView = new EmpleadoresView();
 
         ErrorView errorView = new ErrorView();
+
         navigator.addView(VIEW_EMPLEADORES, empleadoresView);
         navigator.addView(VIEW_EGRESADOS, egresadosView);
         navigator.addView(VIEW_BUSQUEDAS, busquedasView);
+        navigator.addView(VIEW_NUEVO_EMPLEADOR, nuevoEmpleadorView);
         navigator.setErrorView(errorView);
 
         barraDeMenu.addItem("Empleadores", null, new MenuBar.Command() {
