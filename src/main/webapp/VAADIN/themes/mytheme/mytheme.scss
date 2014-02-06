@@ -8,5 +8,10 @@
   /* Include all the styles from the reindeer theme */
   @include reindeer;
 
+  .titulo {
+    font-size: 50px;
+    color: red;
+  }
+
   /* Insert your theme rules here */
 }
