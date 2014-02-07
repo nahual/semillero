@@ -1,16 +1,35 @@
 package org.nahual.semillero.views;
 
+import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import org.hibernate.SessionFactory;
+import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.model.Empleador;
+import org.nahual.utils.SpringHelper;
 
 
 public class NuevoEmpleadorView extends VerticalLayout implements View {
 
+    private TextArea observacionesTF;
+    private TextField empresaTF;
+    private TextField contactoTF;
+
     public NuevoEmpleadorView() {
         this.setSizeFull();
         this.setMargin(true);
+        this.addComponent(createLayout());
+    }
 
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
+        this.empresaTF.setValue("");
+        this.contactoTF.setValue("");
+        this.observacionesTF.setValue("");
+    }
+
+    private VerticalLayout createLayout() {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
@@ -19,46 +38,41 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
 
         layout.addComponent(tituloEmpleador);
 
-        // A FormLayout used outside the context of a Form
         FormLayout fl = new FormLayout();
         layout.addComponent(fl);
 
-        // Make the FormLayout shrink to its contents
         fl.setSizeUndefined();
 
-        TextField empresaTF = new TextField("Empresa");
+        empresaTF = new TextField("Empresa");
         fl.addComponent(empresaTF);
 
 
         empresaTF.setRequired(true);
         empresaTF.setRequiredError("Empresa no puede estar vacio");
 
-        TextField contactoTF = new TextField("Contacto");
+        contactoTF = new TextField("Contacto");
         fl.addComponent(contactoTF);
 
         contactoTF.setRequired(true);
         contactoTF.setRequiredError("Contacto no puede estar vacio");
 
-        TextArea observacionesTF = new TextArea("Observaciones");
+        observacionesTF = new TextArea("Observaciones");
         fl.addComponent(observacionesTF);
 
 
         Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                Window ventana = new Window("Gracias");
-                UI.getCurrent().addWindow(ventana);
-                VerticalLayout contenidoVentana = new VerticalLayout();
-                contenidoVentana.addComponent(new Label("Gracias por clickear"));
-                ventana.setContent(contenidoVentana);
+                HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+                Empleador empleador = new Empleador();
+                empleador.setEmpresa(empresaTF.getValue());
+                empleador.setContacto(contactoTF.getValue());
+                empleador.setObservaciones(observacionesTF.getValue());
+                hbn.saveEntity(empleador);
+                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
             }
         });
         fl.addComponent(button);
-
-        this.addComponent(layout);
-    }
-
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
+        return layout;
     }
 }
