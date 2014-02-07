@@ -1,6 +1,7 @@
 package org.nahual.semillero.views;
 
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.event.Action;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -44,13 +45,32 @@ public class EmpleadoresView extends VerticalLayout implements View {
         busquedaLayout.addComponent(searchButton);
 
         /* Tabla de empleadores */
-        Table table = new Table();
+        final Table table = new Table();
         table.setWidth("50%");
 
         table.addContainerProperty("Empleador", String.class, null);
         table.addContainerProperty("Contacto", String.class, null);
         table.addContainerProperty("Observaciones", String.class, null);
-        table.setContainerDataSource(new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession()));
+        final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
+        table.setContainerDataSource(hbn);
+        table.addGeneratedColumn("", new Table.ColumnGenerator() {
+
+            @Override public Object generateCell(final Table source, final Object itemId, Object columnId) {
+
+                Button button = new Button("Delete");
+
+                button.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        hbn.removeItem(itemId);
+                        table.removeItem(itemId);
+                    }
+                });
+
+                return button;
+            }
+        });
         layout.addComponent(table);
 
         layout.setMargin(true);
