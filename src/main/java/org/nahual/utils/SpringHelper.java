@@ -1,5 +1,6 @@
 package org.nahual.utils;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -16,6 +17,10 @@ public class SpringHelper implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     private SpringHelper() {
+    }
+
+    public static SessionFactory getSession() {
+        return getBean("sessionFactory", SessionFactory.class);
     }
 
     @Override

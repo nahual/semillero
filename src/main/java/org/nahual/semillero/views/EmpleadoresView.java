@@ -1,9 +1,12 @@
 package org.nahual.semillero.views;
 
+import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.model.Empleador;
+import org.nahual.utils.SpringHelper;
 
 
 public class EmpleadoresView extends VerticalLayout implements View {
@@ -45,9 +48,9 @@ public class EmpleadoresView extends VerticalLayout implements View {
         table.setWidth("50%");
 
         table.addContainerProperty("Empleador", String.class, null);
-        table.addContainerProperty("Busquedas Activas", String.class, null);
-        table.addContainerProperty("Acciones", Integer.class, null);
-
+        table.addContainerProperty("Contacto", String.class, null);
+        table.addContainerProperty("Observaciones", String.class, null);
+        table.setContainerDataSource(new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession()));
         layout.addComponent(table);
 
         layout.setMargin(true);
