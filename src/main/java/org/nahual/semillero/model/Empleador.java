@@ -9,20 +9,20 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name="EMPLEADOR")
+@Table(name = "EMPLEADOR")
 public class Empleador {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private int id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    @Column(name="EMPRESA")
+    @Column(name = "EMPRESA")
     private String empresa;
 
-    @Column(name="CONTACTO")
+    @Column(name = "CONTACTO")
     private String contacto;
 
-    @Column(name="OBSERVACIONES")
+    @Column(name = "OBSERVACIONES")
     private String observaciones;
 
     public String getEmpresa() {
@@ -49,7 +49,11 @@ public class Empleador {
         this.observaciones = observaciones;
     }
 
-    public int getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

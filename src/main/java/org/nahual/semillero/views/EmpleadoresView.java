@@ -1,7 +1,7 @@
 package org.nahual.semillero.views;
 
 import com.vaadin.data.hbnutil.HbnContainer;
-import com.vaadin.event.Action;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -47,15 +47,29 @@ public class EmpleadoresView extends VerticalLayout implements View {
         /* Tabla de empleadores */
         final Table table = new Table();
         table.setWidth("50%");
-
-        table.addContainerProperty("Empleador", String.class, null);
-        table.addContainerProperty("Contacto", String.class, null);
-        table.addContainerProperty("Observaciones", String.class, null);
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
         table.setContainerDataSource(hbn);
-        table.addGeneratedColumn("", new Table.ColumnGenerator() {
+        table.addContainerProperty("Id", Long.class, null);
 
-            @Override public Object generateCell(final Table source, final Object itemId, Object columnId) {
+        table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                Window window = new Window();
+                getUI().addWindow(window);
+                window.setModal(true);
+                window.setHeight("500px");
+                window.setWidth("350px");
+                NuevoEmpleadorView empleadorView = new NuevoEmpleadorView();
+                empleadorView.setElemento(event.getItem());
+                empleadorView.setContainer(hbn);
+                window.setContent(empleadorView);
+            }
+        });
+
+      /*  table.addGeneratedColumn("", new Table.ColumnGenerator() {
+
+            @Override
+            public Object generateCell(final Table source, final Object itemId, Object columnId) {
 
                 Button button = new Button("Delete");
 
@@ -70,7 +84,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
                 return button;
             }
-        });
+        });    */
         layout.addComponent(table);
 
         layout.setMargin(true);

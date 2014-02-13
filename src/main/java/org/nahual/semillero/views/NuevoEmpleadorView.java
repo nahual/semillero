@@ -1,5 +1,7 @@
 package org.nahual.semillero.views;
 
+import com.vaadin.data.Item;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -15,11 +17,18 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
     private TextArea observacionesTF;
     private TextField empresaTF;
     private TextField contactoTF;
+    private Item elemento;
+    private FieldGroup fieldGroup;
+    private HbnContainer<Empleador> container;
 
     public NuevoEmpleadorView() {
         this.setSizeFull();
         this.setMargin(true);
         this.addComponent(createLayout());
+        fieldGroup = new FieldGroup();
+        fieldGroup.bind(this.empresaTF, "empresa");
+        fieldGroup.bind(this.observacionesTF, "observaciones");
+        fieldGroup.bind(this.contactoTF, "contacto");
     }
 
     @Override
@@ -64,15 +73,34 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
                 HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-                Empleador empleador = new Empleador();
-                empleador.setEmpresa(empresaTF.getValue());
-                empleador.setContacto(contactoTF.getValue());
-                empleador.setObservaciones(observacionesTF.getValue());
-                hbn.saveEntity(empleador);
-                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                if (fieldGroup.getItemDataSource().getItemProperty("Id").getValue() != null) {
+                    try {
+                        fieldGroup.commit();
+                        hbn.saveEntity((Empleador) ((HbnContainer.EntityItem) fieldGroup.getItemDataSource()).getPojo());
+                    } catch (FieldGroup.CommitException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Empleador empleador = new Empleador();
+                    empleador.setEmpresa(empresaTF.getValue());
+                    empleador.setContacto(contactoTF.getValue());
+                    empleador.setObservaciones(observacionesTF.getValue());
+                    hbn.saveEntity(empleador);
+                    UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                }
             }
+
         });
         fl.addComponent(button);
         return layout;
+    }
+
+    public void setElemento(Item elemento) {
+        this.elemento = elemento;
+        fieldGroup.setItemDataSource(this.elemento);
+    }
+
+    public void setContainer(HbnContainer<Empleador> container) {
+        this.container = container;
     }
 }
