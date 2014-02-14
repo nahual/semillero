@@ -10,6 +10,9 @@ import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 
 public class NuevoEmpleadorView extends VerticalLayout implements View {
@@ -72,22 +75,27 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-                if (fieldGroup.getItemDataSource().getItemProperty("Id").getValue() != null) {
-                    try {
-                        fieldGroup.commit();
-                        hbn.saveEntity((Empleador) ((HbnContainer.EntityItem) fieldGroup.getItemDataSource()).getPojo());
-                    } catch (FieldGroup.CommitException e) {
-                        e.printStackTrace();
+                TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
+                transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                    @Override
+                    protected void doInTransactionWithoutResult(TransactionStatus status) {
+                        if (fieldGroup.getItemDataSource() != null && fieldGroup.getItemDataSource().getItemProperty("Id").getValue() != null) {
+                            try {
+                                fieldGroup.commit();
+                            } catch (FieldGroup.CommitException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+                            Empleador empleador = new Empleador();
+                            empleador.setEmpresa(empresaTF.getValue());
+                            empleador.setContacto(contactoTF.getValue());
+                            empleador.setObservaciones(observacionesTF.getValue());
+                            hbn.saveEntity(empleador);
+                            UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                        }
                     }
-                } else {
-                    Empleador empleador = new Empleador();
-                    empleador.setEmpresa(empresaTF.getValue());
-                    empleador.setContacto(contactoTF.getValue());
-                    empleador.setObservaciones(observacionesTF.getValue());
-                    hbn.saveEntity(empleador);
-                    UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
-                }
+                });
             }
 
         });
