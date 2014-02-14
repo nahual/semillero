@@ -39,6 +39,10 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         this.empresaTF.setValue("");
         this.contactoTF.setValue("");
         this.observacionesTF.setValue("");
+        HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Empleador empleador = new Empleador();
+        //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
+        this.setElemento(hbn.addItem(empleador));
     }
 
     private VerticalLayout createLayout() {
@@ -79,20 +83,10 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        if (fieldGroup.getItemDataSource() != null && fieldGroup.getItemDataSource().getItemProperty("Id").getValue() != null) {
-                            try {
-                                fieldGroup.commit();
-                            } catch (FieldGroup.CommitException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-                            Empleador empleador = new Empleador();
-                            empleador.setEmpresa(empresaTF.getValue());
-                            empleador.setContacto(contactoTF.getValue());
-                            empleador.setObservaciones(observacionesTF.getValue());
-                            hbn.saveEntity(empleador);
-                            UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                        try {
+                            fieldGroup.commit();
+                        } catch (FieldGroup.CommitException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
