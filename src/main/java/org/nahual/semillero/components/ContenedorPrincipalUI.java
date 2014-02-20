@@ -8,8 +8,8 @@ import org.nahual.semillero.views.*;
 public class ContenedorPrincipalUI extends CustomComponent {
     public static final String VIEW_EMPLEADORES = "empleadores";
     public static final String VIEW_NUEVO_EMPLEADOR = "nuevoEmpleador";
-    private static final String VIEW_EGRESADOS = "egresados";
-    private static final String VIEW_BUSQUEDAS = "busquedas";
+    public static final String VIEW_EGRESADOS = "egresados";
+    public static final String VIEW_BUSQUEDAS = "busquedas";
 
     private MenuBar barraDeMenu = new MenuBar();
     private VerticalLayout mainLayout;
@@ -41,7 +41,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
     }
 
     public void setupMenu() {
-        EgresadosView egresadosView = new EgresadosView();
+        NuevoEgresadoView egresadosView = new NuevoEgresadoView();
         NuevoEmpleadorView nuevoEmpleadorView = new NuevoEmpleadorView();
         BusquedasView busquedasView = new BusquedasView();
         EmpleadoresView empleadoresView = new EmpleadoresView();
