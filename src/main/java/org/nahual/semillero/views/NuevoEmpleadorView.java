@@ -24,6 +24,16 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
     private FieldGroup fieldGroup;
     private HbnContainer<Empleador> container;
 
+    public Window getWindow() {
+        return window;
+    }
+
+    public void setWindow(Window window) {
+        this.window = window;
+    }
+
+    public  Window window;
+
     public NuevoEmpleadorView() {
         this.setSizeFull();
         this.setMargin(true);
@@ -85,7 +95,10 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
-                            UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                            if (window != null)
+                                window.close();
+                            else
+                                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
                         }

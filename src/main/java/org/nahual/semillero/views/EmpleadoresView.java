@@ -50,7 +50,6 @@ public class EmpleadoresView extends VerticalLayout implements View {
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
         table.setContainerDataSource(hbn);
         table.addContainerProperty("Id", Long.class, null);
-
         table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
@@ -62,6 +61,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
                 NuevoEmpleadorView empleadorView = new NuevoEmpleadorView();
                 empleadorView.setElemento(event.getItem());
                 empleadorView.setContainer(hbn);
+                empleadorView.setWindow(window);
                 window.setContent(empleadorView);
             }
         });
