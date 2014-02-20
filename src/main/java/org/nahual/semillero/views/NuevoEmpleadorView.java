@@ -35,6 +35,13 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
     public  Window window;
 
     public NuevoEmpleadorView() {
+        init();
+        HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
+        setElemento(hbn.getItem(hbn.saveEntity(new Empleador())));
+    }
+
+    private void init() {
         this.setSizeFull();
         this.setMargin(true);
         this.addComponent(createLayout());
@@ -44,15 +51,16 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         fieldGroup.bind(this.contactoTF, "contacto");
     }
 
+    public NuevoEmpleadorView(Item item) {
+        init();
+        setElemento(item);
+    }
+
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         this.empresaTF.setValue("");
         this.contactoTF.setValue("");
         this.observacionesTF.setValue("");
-        HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        Empleador empleador = new Empleador();
-        //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
-        setElemento(hbn.getItem(hbn.saveEntity(new Empleador())));
     }
 
     private VerticalLayout createLayout() {

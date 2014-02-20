@@ -51,7 +51,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
         navigator.addView(VIEW_EMPLEADORES, empleadoresView);
         navigator.addView(VIEW_EGRESADOS, egresadosView);
         navigator.addView(VIEW_BUSQUEDAS, busquedasView);
-        navigator.addView(VIEW_NUEVO_EMPLEADOR, nuevoEmpleadorView);
+        navigator.addView(VIEW_NUEVO_EMPLEADOR, NuevoEmpleadorView.class);
         navigator.setErrorView(errorView);
 
         barraDeMenu.addItem("Empleadores", null, new MenuBar.Command() {
