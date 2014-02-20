@@ -39,6 +39,10 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         this.empresaTF.setValue("");
         this.contactoTF.setValue("");
         this.observacionesTF.setValue("");
+        HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Empleador empleador = new Empleador();
+        //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
+        setElemento(hbn.getItem(hbn.saveEntity(new Empleador())));
     }
 
     private VerticalLayout createLayout() {
@@ -79,20 +83,11 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        if (fieldGroup.getItemDataSource() != null && fieldGroup.getItemDataSource().getItemProperty("Id").getValue() != null) {
-                            try {
-                                fieldGroup.commit();
-                            } catch (FieldGroup.CommitException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-                            Empleador empleador = new Empleador();
-                            empleador.setEmpresa(empresaTF.getValue());
-                            empleador.setContacto(contactoTF.getValue());
-                            empleador.setObservaciones(observacionesTF.getValue());
-                            hbn.saveEntity(empleador);
+                        try {
+                            fieldGroup.commit();
                             UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                        } catch (FieldGroup.CommitException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
