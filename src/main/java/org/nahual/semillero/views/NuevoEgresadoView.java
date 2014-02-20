@@ -27,7 +27,6 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
     private ComboBox cuatrimestre;
     private TextArea observacionesTF;
 
-    private Item elemento;
     private FieldGroup fieldGroup;
 
     private ArrayList<String> cuatrimestresValidos = new ArrayList<String>();
@@ -43,6 +42,8 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         fieldGroup.bind(this.correoElectronico, "correoElectronico");
         fieldGroup.bind(this.nodo, "nodo");
         fieldGroup.bind(this.cuatrimestre, "cuatrimestre");
+        fieldGroup.bind(this.observacionesTF, "observaciones");
+
     }
 
     @Override
@@ -54,6 +55,8 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         this.nodo.setValue("");
         this.cuatrimestre.setValue("");
         this.observacionesTF.setValue("");
+        HbnContainer hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        setElemento(hbn.getItem(hbn.saveEntity(new Egresado())));
     }
 
     private VerticalLayout createLayout() {
@@ -105,25 +108,12 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
                 transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
-                        if (fieldGroup.getItemDataSource() != null && fieldGroup.getItemDataSource().getItemProperty("Id").getValue() != null) {
-                            try {
-                                fieldGroup.commit();
-                            } catch (FieldGroup.CommitException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            HbnContainer hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-                            Egresado egresado = new Egresado();
-                            egresado.setNombre(nombreTF.getValue());
-                            egresado.setTelefonoFijo(Long.valueOf(telefonoFijoTF.getValue()));
-                            egresado.setTelefonoMovil(Long.valueOf(telefonoMovilTF.getValue()));
-                            egresado.setCorreoElectronico(correoElectronico.getValue());
-                            egresado.setCuatrimestre(cuatrimestre.getCaption());
-                            egresado.setNodo(nodo.getCaption());
-                            egresado.setObservaciones(observacionesTF.getValue());
-                            hbn.saveEntity(egresado);
-                            UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EGRESADOS);
+                        try {
+                            fieldGroup.commit();
+                        } catch (FieldGroup.CommitException e) {
+                            e.printStackTrace();
                         }
+                        UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EGRESADOS);
                     }
                 });
             }
@@ -135,8 +125,7 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
     }
 
     public void setElemento(Item elemento) {
-        this.elemento = elemento;
-        fieldGroup.setItemDataSource(this.elemento);
+        fieldGroup.setItemDataSource(elemento);
     }
 
 }

@@ -15,10 +15,10 @@ public class Egresado {
     private String nombre;
 
     @Column(name = "TELEFONOFIJO")
-    private Long telefonoFijo;
+    private String telefonoFijo;
 
     @Column(name = "TELEFONOMOVIL")
-    private Long telefonoMovil;
+    private String telefonoMovil;
 
     @Column(name = "EMAIL")
     private String correoElectronico;
@@ -51,19 +51,19 @@ public class Egresado {
         this.nombre = nombre;
     }
 
-    public Long getTelefonoFijo() {
+    public String getTelefonoFijo() {
         return telefonoFijo;
     }
 
-    public void setTelefonoFijo(Long telefonoFijo) {
+    public void setTelefonoFijo(String telefonoFijo) {
         this.telefonoFijo = telefonoFijo;
     }
 
-    public Long getTelefonoMovil() {
+    public String getTelefonoMovil() {
         return telefonoMovil;
     }
 
-    public void setTelefonoMovil(Long telefonoMovil) {
+    public void setTelefonoMovil(String telefonoMovil) {
         this.telefonoMovil = telefonoMovil;
     }
 
