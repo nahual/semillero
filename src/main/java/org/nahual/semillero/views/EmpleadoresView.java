@@ -22,7 +22,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
         Label tituloEmpleadores = new Label("Empleadores");
         tituloEmpleadores.setStyleName("titulo");
-        tituloEmpleadores.setHeight("3em");
+        tituloEmpleadores.setHeight("100%");
         layout.addComponent(tituloEmpleadores);
         layout.addComponent(topLayout);
 
