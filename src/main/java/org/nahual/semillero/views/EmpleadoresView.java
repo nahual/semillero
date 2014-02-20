@@ -49,7 +49,8 @@ public class EmpleadoresView extends VerticalLayout implements View {
         table.setWidth("50%");
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
         table.setContainerDataSource(hbn);
-        table.addContainerProperty("Id", Long.class, null);
+        table.setVisibleColumns(new Object[]{"empresa", "contacto", "observaciones"});
+
         table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
             @Override
             public void itemClick(ItemClickEvent event) {
