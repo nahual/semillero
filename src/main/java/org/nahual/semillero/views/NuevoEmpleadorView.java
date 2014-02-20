@@ -42,7 +42,7 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Empleador empleador = new Empleador();
         //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
-        this.setElemento(hbn.addItem(empleador));
+        setElemento(hbn.getItem(hbn.saveEntity(new Empleador())));
     }
 
     private VerticalLayout createLayout() {
@@ -85,6 +85,7 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
+                            UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
                         }
