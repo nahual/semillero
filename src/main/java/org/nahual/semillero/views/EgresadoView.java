@@ -3,6 +3,7 @@ package org.nahual.semillero.views;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -20,8 +21,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.ArrayList;
 
 
-public class NuevoEgresadoView extends VerticalLayout implements View {
+public class EgresadoView extends VerticalLayout implements View {
 
+    private HbnContainer<Egresado> hbn;
+    private boolean nuevoItem;
     private TextField nombreTF;
     private TextField telefonoFijoTF;
     private TextField telefonoMovilTF;
@@ -31,9 +34,28 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
     private TextArea observacionesTF;
 
     private FieldGroup fieldGroup;
+    private Window window;
 
 
-    public NuevoEgresadoView() {
+    public EgresadoView(HbnContainer<Egresado> hbn) {
+        this.hbn = hbn;
+        init();
+        Item newItem = new BeanItem<Egresado>(new Egresado());
+        this.nuevoItem = true;
+        setElemento(newItem);
+    }
+
+    public EgresadoView() {
+        this(new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class)));
+    }
+
+    public EgresadoView(Item item) {
+        init();
+        this.nuevoItem = false;
+        setElemento(item);
+    }
+
+    private void init() {
         this.setSizeFull();
         this.setMargin(true);
         this.addComponent(createLayout());
@@ -49,13 +71,14 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         // Se aplica un estilo particular a los captions de los fields
         for (Object field : fieldGroup.getFields()) {
             ((AbstractComponent) field).setStyleName("textField");
+            if (field instanceof AbstractTextField)
+                ((AbstractTextField) field).setNullRepresentation("");
         }
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        HbnContainer hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        setElemento(hbn.getItem(hbn.saveEntity(new Egresado())));
+
     }
 
     private VerticalLayout createLayout() {
@@ -114,21 +137,14 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
-                            if (fieldGroup.isValid()) {
-                                fieldGroup.commit();
-                                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EGRESADOS);
-                            } else {
-                                Window window = new Window();
-                                getUI().addWindow(window);
-                                window.setModal(true);
-
-                                final VerticalLayout layout = new VerticalLayout();
-                                layout.setMargin(true);
-                                Label texto = new Label("Campos inválidos. Revisar");
-                                layout.addComponent(texto);
-
-                                window.setContent(layout);
+                            fieldGroup.commit();
+                            if (nuevoItem) {
+                                hbn.saveEntity(((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
                             }
+                            if (window != null)
+                                window.close();
+                            else
+                                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
 
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
@@ -169,5 +185,14 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
     public void setElemento(Item elemento) {
         fieldGroup.setItemDataSource(elemento);
     }
+
+    public Window getWindow() {
+        return window;
+    }
+
+    public void setWindow(Window window) {
+        this.window = window;
+    }
+
 
 }

@@ -41,15 +41,13 @@ public class ContenedorPrincipalUI extends CustomComponent {
     }
 
     public void setupMenu() {
-        NuevoEgresadoView egresadosView = new NuevoEgresadoView();
-        EmpleadorView empleadorView = new EmpleadorView();
         BusquedasView busquedasView = new BusquedasView();
         EmpleadoresView empleadoresView = new EmpleadoresView();
 
         ErrorView errorView = new ErrorView();
 
         navigator.addView(VIEW_EMPLEADORES, empleadoresView);
-        navigator.addView(VIEW_EGRESADOS, egresadosView);
+        navigator.addView(VIEW_EGRESADOS, EgresadoView.class);
         navigator.addView(VIEW_BUSQUEDAS, busquedasView);
         navigator.addView(VIEW_NUEVO_EMPLEADOR, EmpleadorView.class);
         navigator.setErrorView(errorView);
