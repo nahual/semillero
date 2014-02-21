@@ -7,5 +7,7 @@
     <session-factory>
         <mapping class="org.nahual.semillero.model.Empleador"/>
         <mapping class="org.nahual.semillero.model.Egresado"/>
+        <mapping class="org.nahual.semillero.model.Nodo"/>
+        <mapping class="org.nahual.semillero.model.Cuatrimestre"/>
     </session-factory>
 </hibernate-configuration>
