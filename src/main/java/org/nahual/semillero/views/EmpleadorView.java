@@ -1,8 +1,10 @@
 package org.nahual.semillero.views;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -14,9 +16,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.swing.text.html.parser.Entity;
 
-public class NuevoEmpleadorView extends VerticalLayout implements View {
 
+public class EmpleadorView extends VerticalLayout implements View {
+
+    private boolean nuevoItem;
+    private HbnContainer<Empleador> hbn;
     private TextArea observacionesTF;
     private TextField empresaTF;
     private TextField contactoTF;
@@ -30,13 +36,15 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         this.window = window;
     }
 
-    public  Window window;
+    public Window window;
 
-    public NuevoEmpleadorView() {
+    public EmpleadorView() {
         init();
-        HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        this.hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
-        setElemento(hbn.getItem(hbn.saveEntity(new Empleador())));
+        Item newItem = new BeanItem<Empleador>(new Empleador());
+        this.nuevoItem = true;
+        setElemento(newItem);
     }
 
     private void init() {
@@ -49,8 +57,9 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         fieldGroup.bind(this.contactoTF, "contacto");
     }
 
-    public NuevoEmpleadorView(Item item) {
+    public EmpleadorView(Item item) {
         init();
+        this.nuevoItem = false;
         setElemento(item);
     }
 
@@ -101,6 +110,9 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
+                            if (nuevoItem) {
+                                hbn.saveEntity(((BeanItem<Empleador>) fieldGroup.getItemDataSource()).getBean());
+                            }
                             if (window != null)
                                 window.close();
                             else
@@ -117,7 +129,7 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
         return layout;
     }
 
-    public void setElemento(Item elemento) {
+    private void setElemento(Item elemento) {
         fieldGroup.setItemDataSource(elemento);
     }
 }
