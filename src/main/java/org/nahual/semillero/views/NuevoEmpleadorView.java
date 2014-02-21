@@ -20,9 +20,7 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
     private TextArea observacionesTF;
     private TextField empresaTF;
     private TextField contactoTF;
-    private Item elemento;
     private FieldGroup fieldGroup;
-    private HbnContainer<Empleador> container;
 
     public Window getWindow() {
         return window;
@@ -120,11 +118,6 @@ public class NuevoEmpleadorView extends VerticalLayout implements View {
     }
 
     public void setElemento(Item elemento) {
-        this.elemento = elemento;
-        fieldGroup.setItemDataSource(this.elemento);
-    }
-
-    public void setContainer(HbnContainer<Empleador> container) {
-        this.container = container;
+        fieldGroup.setItemDataSource(elemento);
     }
 }

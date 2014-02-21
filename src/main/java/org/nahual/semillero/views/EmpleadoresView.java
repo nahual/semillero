@@ -59,9 +59,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
                 window.setModal(true);
                 window.setHeight("500px");
                 window.setWidth("350px");
-                NuevoEmpleadorView empleadorView = new NuevoEmpleadorView(event.getItem());
-                empleadorView.setContainer(hbn);
-                empleadorView.setWindow(window);
+                EmpleadorView empleadorView = new EmpleadorView(event.getItem());
                 window.setContent(empleadorView);
             }
         });
