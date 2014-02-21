@@ -3,12 +3,15 @@ package org.nahual.semillero.views;
 import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.model.Cuatrimestre;
 import org.nahual.semillero.model.Egresado;
+import org.nahual.semillero.model.Nodo;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -29,7 +32,6 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
 
     private FieldGroup fieldGroup;
 
-    private ArrayList<String> cuatrimestresValidos = new ArrayList<String>();
 
     public NuevoEgresadoView() {
         this.setSizeFull();
@@ -44,17 +46,14 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         fieldGroup.bind(this.cuatrimestre, "cuatrimestre");
         fieldGroup.bind(this.observacionesTF, "observaciones");
 
+        // Se aplica un estilo particular a los captions de los fields
+        for (Object field : fieldGroup.getFields()) {
+            ((AbstractComponent) field).setStyleName("textField");
+        }
     }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        this.nombreTF.setValue("");
-        this.telefonoFijoTF.setValue("");
-        this.telefonoMovilTF.setValue("");
-        this.correoElectronico.setValue("");
-        this.nodo.setValue("");
-        this.cuatrimestre.setValue("");
-        this.observacionesTF.setValue("");
         HbnContainer hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         setElemento(hbn.getItem(hbn.saveEntity(new Egresado())));
     }
@@ -76,6 +75,7 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         nombreTF = new TextField("Nombre");
         fl.addComponent(nombreTF);
         nombreTF.setRequired(true);
+        nombreTF.setValidationVisible(true);
         nombreTF.setRequiredError("Nombre no puede estar vacio");
 
         telefonoFijoTF = new TextField("Telefono fijo");
@@ -85,16 +85,21 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         fl.addComponent(telefonoMovilTF);
 
         correoElectronico = new TextField("Correo electrónico");
+        correoElectronico.addValidator(new EmailValidator("e-mail inválido"));
+        correoElectronico.setValidationVisible(true);
+        correoElectronico.setImmediate(true); // Esto es para que la validación se haga de inmediato
         fl.addComponent(correoElectronico);
 
         cuatrimestre = new ComboBox("Cuatrimestre");
-        /*cuatrimestre.setRequired(true);
-        cuatrimestre.setRequiredError("Cuatrimestre no puede estar vacio");*/
+        cuatrimestre.setRequired(true);
+        cuatrimestre.setRequiredError("Cuatrimestre no puede estar vacio");
+        this.cargarCuatrimestres();
         fl.addComponent(cuatrimestre);
 
         nodo = new ComboBox("Nodo");
-        /*nodo.setRequired(true);
-        nodo.setRequiredError("Nodo no puede estar vacio");*/
+        nodo.setRequired(true);
+        nodo.setRequiredError("Nodo no puede estar vacio");
+        this.cargarNodos();
         fl.addComponent(nodo);
 
         observacionesTF = new TextArea("Observaciones");
@@ -109,11 +114,26 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
-                            fieldGroup.commit();
+                            if (fieldGroup.isValid()) {
+                                fieldGroup.commit();
+                                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EGRESADOS);
+                            } else {
+                                Window window = new Window();
+                                getUI().addWindow(window);
+                                window.setModal(true);
+
+                                final VerticalLayout layout = new VerticalLayout();
+                                layout.setMargin(true);
+                                Label texto = new Label("Campos inválidos. Revisar");
+                                layout.addComponent(texto);
+
+                                window.setContent(layout);
+                            }
+
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
                         }
-                        UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EGRESADOS);
+
                     }
                 });
             }
@@ -123,6 +143,28 @@ public class NuevoEgresadoView extends VerticalLayout implements View {
         fl.addComponent(button);
         return layout;
     }
+
+    private void cargarNodos() {
+        HbnContainer hbn = new HbnContainer<Nodo>(Nodo.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+
+        ArrayList ids = (ArrayList) hbn.getItemIds();
+        for (Object id : ids) {
+            nodo.addItem(((Nodo) (hbn.getItem(id).getPojo())).getNombre());
+        }
+
+    }
+
+    /* TODO: Mejorar leyendo la fecha actual y una fecha inicial y calcular la cantidad de cuatrimestres
+    que hubo en el intermedio para no leer valores fijos */
+    private void cargarCuatrimestres() {
+        HbnContainer hbn = new HbnContainer<Cuatrimestre>(Cuatrimestre.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+
+        ArrayList ids = (ArrayList) hbn.getItemIds();
+        for (Object id : ids) {
+            cuatrimestre.addItem(((Cuatrimestre) (hbn.getItem(id).getPojo())).getCuatrimestre());
+        }
+    }
+
 
     public void setElemento(Item elemento) {
         fieldGroup.setItemDataSource(elemento);
