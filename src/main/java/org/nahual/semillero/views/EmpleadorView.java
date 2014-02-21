@@ -1,7 +1,6 @@
 package org.nahual.semillero.views;
 
 import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
@@ -16,7 +15,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.swing.text.html.parser.Entity;
+import java.util.Collection;
 
 
 public class EmpleadorView extends VerticalLayout implements View {
@@ -27,6 +26,14 @@ public class EmpleadorView extends VerticalLayout implements View {
     private TextField empresaTF;
     private TextField contactoTF;
     private FieldGroup fieldGroup;
+
+    public EmpleadorView(HbnContainer<Empleador> hbn) {
+        init();
+        this.hbn = hbn;
+        Item newItem = new BeanItem<Empleador>(new Empleador());
+        this.nuevoItem = true;
+        setElemento(newItem);
+    }
 
     public Window getWindow() {
         return window;
@@ -39,12 +46,8 @@ public class EmpleadorView extends VerticalLayout implements View {
     public Window window;
 
     public EmpleadorView() {
-        init();
-        this.hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        //necesito agregar el empleador al HBNContainer para que el item enviado a set elemento tenga bindeado el HBNContainer
-        Item newItem = new BeanItem<Empleador>(new Empleador());
-        this.nuevoItem = true;
-        setElemento(newItem);
+        this(new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class)));
+
     }
 
     private void init() {
@@ -55,6 +58,12 @@ public class EmpleadorView extends VerticalLayout implements View {
         fieldGroup.bind(this.empresaTF, "empresa");
         fieldGroup.bind(this.observacionesTF, "observaciones");
         fieldGroup.bind(this.contactoTF, "contacto");
+        Collection<Field<?>> fields = fieldGroup.getFields();
+        for (Field<?> field : fields) {
+            if (field instanceof AbstractTextField) {
+                ((AbstractTextField) field).setNullRepresentation("");
+            }
+        }
     }
 
     public EmpleadorView(Item item) {

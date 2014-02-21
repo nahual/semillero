@@ -5,7 +5,6 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
-import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 
@@ -26,11 +25,26 @@ public class EmpleadoresView extends VerticalLayout implements View {
         layout.addComponent(tituloEmpleadores);
         layout.addComponent(topLayout);
 
+
+        /* Tabla de empleadores */
+        final Table table = new Table();
+        table.setWidth("50%");
+        final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
+        table.setContainerDataSource(hbn);
+        table.setVisibleColumns(new Object[]{"empresa", "contacto", "observaciones"});
+
         /* topLayout */
         Button botonNuevoEmpleador = new Button("Nuevo Empleador");
         botonNuevoEmpleador.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_NUEVO_EMPLEADOR);
+                Window window = new Window();
+                getUI().addWindow(window);
+                window.setModal(true);
+                window.setHeight("500px");
+                window.setWidth("350px");
+                EmpleadorView empleadorView = new EmpleadorView(hbn);
+                empleadorView.setWindow(window);
+                window.setContent(empleadorView);
             }
         });
         topLayout.addComponent(botonNuevoEmpleador);
@@ -44,12 +58,6 @@ public class EmpleadoresView extends VerticalLayout implements View {
         busquedaLayout.addComponent(campoBusqueda);
         busquedaLayout.addComponent(searchButton);
 
-        /* Tabla de empleadores */
-        final Table table = new Table();
-        table.setWidth("50%");
-        final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
-        table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"empresa", "contacto", "observaciones"});
 
         table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
             @Override
@@ -65,7 +73,8 @@ public class EmpleadoresView extends VerticalLayout implements View {
             }
         });
 
-      /*  table.addGeneratedColumn("", new Table.ColumnGenerator() {
+/*
+        table.addGeneratedColumn("", new Table.ColumnGenerator() {
 
             @Override
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
@@ -83,7 +92,8 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
                 return button;
             }
-        });    */
+        });*/
+
         layout.addComponent(table);
 
         layout.setMargin(true);
