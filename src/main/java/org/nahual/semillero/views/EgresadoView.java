@@ -36,6 +36,8 @@ public class EgresadoView extends VerticalLayout implements View {
     private FieldGroup fieldGroup;
     private Window window;
 
+    private ArrayList<String> cuatrimestresValidos = new ArrayList<String>();
+    private HbnContainer<Egresado> container;
 
     public EgresadoView(HbnContainer<Egresado> hbn) {
         this.hbn = hbn;
@@ -195,4 +197,7 @@ public class EgresadoView extends VerticalLayout implements View {
     }
 
 
+    public void setContainer(HbnContainer<Egresado> container) {
+        this.container = container;
+    }
 }

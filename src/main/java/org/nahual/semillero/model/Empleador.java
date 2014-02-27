@@ -25,6 +25,9 @@ public class Empleador {
     @Column(name = "OBSERVACIONES")
     private String observaciones;
 
+    @Column(name = "ACTIVO")
+    private Boolean activo;
+
     public String getEmpresa() {
         return empresa;
     }
@@ -55,5 +58,13 @@ public class Empleador {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }

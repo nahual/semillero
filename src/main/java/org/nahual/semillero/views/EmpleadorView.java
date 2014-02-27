@@ -30,7 +30,9 @@ public class EmpleadorView extends VerticalLayout implements View {
     public EmpleadorView(HbnContainer<Empleador> hbn) {
         init();
         this.hbn = hbn;
-        Item newItem = new BeanItem<Empleador>(new Empleador());
+        Empleador empleador = new Empleador();
+        empleador.setActivo(true);
+        Item newItem = new BeanItem<Empleador>(empleador);
         this.nuevoItem = true;
         setElemento(newItem);
     }
