@@ -1,10 +1,13 @@
 package org.nahual.semillero.views;
 
+import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 
@@ -29,7 +32,18 @@ public class EmpleadoresView extends VerticalLayout implements View {
         /* Tabla de empleadores */
         final Table table = new Table();
         table.setWidth("50%");
+
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
+
+        hbn.addContainerFilter(new ContainerFilter("activo") {
+            @Override
+            public Criterion getFieldCriterion(String fullPropertyName) {
+                return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+            }
+        });
+
+
+
         table.setContainerDataSource(hbn);
         table.setVisibleColumns(new Object[]{"empresa", "contacto", "observaciones"});
 
@@ -73,7 +87,6 @@ public class EmpleadoresView extends VerticalLayout implements View {
             }
         });
 
-/*
         table.addGeneratedColumn("", new Table.ColumnGenerator() {
 
             @Override
@@ -85,6 +98,10 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
+
+                        Empleador empleadorDelete = hbn.getItem(itemId).getPojo();
+                        empleadorDelete.setActivo(false);
+                        hbn.updateEntity(empleadorDelete);
                         hbn.removeItem(itemId);
                         table.removeItem(itemId);
                     }
@@ -92,7 +109,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
                 return button;
             }
-        });*/
+        });
 
         layout.addComponent(table);
 
