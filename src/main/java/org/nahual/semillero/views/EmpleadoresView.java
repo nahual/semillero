@@ -1,10 +1,13 @@
 package org.nahual.semillero.views;
 
+import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 
@@ -52,8 +55,25 @@ public class EmpleadoresView extends VerticalLayout implements View {
         /* busquedaLayout */
         final HorizontalLayout busquedaLayout = new HorizontalLayout();
         topLayout.addComponent(busquedaLayout);
-        TextField campoBusqueda = new TextField();
+        final TextField campoBusqueda = new TextField();
         Button searchButton = new Button("Buscar");
+        searchButton.addClickListener(new Button.ClickListener() {
+            public void buttonClick(Button.ClickEvent event) {
+                hbn.addContainerFilter(new ContainerFilter("empresa") {
+                    @Override
+                    public Criterion getFieldCriterion(String fullPropertyName) {
+                        String value = "%" + campoBusqueda.getValue() + "%";
+                        return Restrictions.or(
+                                Restrictions.ilike("contacto", value),
+                                Restrictions.or(
+                                        Restrictions.ilike("observaciones", value),
+                                        Restrictions.ilike("empresa", value)
+                                )
+                        );
+                    }
+                });
+            }
+        });
         topLayout.setComponentAlignment(busquedaLayout, Alignment.TOP_RIGHT);
         busquedaLayout.addComponent(campoBusqueda);
         busquedaLayout.addComponent(searchButton);
