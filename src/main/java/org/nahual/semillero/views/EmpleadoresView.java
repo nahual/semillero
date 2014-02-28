@@ -69,8 +69,25 @@ public class EmpleadoresView extends VerticalLayout implements View {
         /* busquedaLayout */
         final HorizontalLayout busquedaLayout = new HorizontalLayout();
         topLayout.addComponent(busquedaLayout);
-        TextField campoBusqueda = new TextField();
+        final TextField campoBusqueda = new TextField();
         Button searchButton = new Button("Buscar");
+        searchButton.addClickListener(new Button.ClickListener() {
+            public void buttonClick(Button.ClickEvent event) {
+                hbn.addContainerFilter(new ContainerFilter("empresa") {
+                    @Override
+                    public Criterion getFieldCriterion(String fullPropertyName) {
+                        String value = "%" + campoBusqueda.getValue() + "%";
+                        return Restrictions.or(
+                                Restrictions.ilike("contacto", value),
+                                Restrictions.or(
+                                        Restrictions.ilike("observaciones", value),
+                                        Restrictions.ilike("empresa", value)
+                                )
+                        );
+                    }
+                });
+            }
+        });
         topLayout.setComponentAlignment(busquedaLayout, Alignment.TOP_RIGHT);
         busquedaLayout.addComponent(campoBusqueda);
         busquedaLayout.addComponent(searchButton);
