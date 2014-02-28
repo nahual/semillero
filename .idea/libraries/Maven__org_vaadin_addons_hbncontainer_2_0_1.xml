@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="Maven: org.vaadin.addons:hbncontainer:2.0.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.msemillero/repository/org/vaadin/addons/hbncontainer/2.0.1/hbncontainer-2.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.msemillero/repository/org/vaadin/addons/hbncontainer/2.0.1/hbncontainer-2.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.msemillero/repository/org/vaadin/addons/hbncontainer/2.0.1/hbncontainer-2.0.1-sources.jar!/" />
+      <root url="jar://$USER_HOME$/.msemillero/repository/org/vaadin/addons/hbncontainer/2.0.1/hbncontainer-2.0.1.jar!/" />
+    </SOURCES>
+  </library>
+</component>

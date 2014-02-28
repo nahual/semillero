@@ -13,6 +13,7 @@ import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Cuatrimestre;
 import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Nodo;
+import org.nahual.utils.CvUploader;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -130,6 +131,13 @@ public class EgresadoView extends VerticalLayout implements View {
         observacionesTF = new TextArea("Observaciones");
         fl.addComponent(observacionesTF);
 
+        // Adjuntar CV
+        CvUploader uploader = new CvUploader();
+        Upload uploadCV = new Upload("Adjuntar CV", uploader);
+        uploadCV.setStyleName("textField");
+        uploadCV.setButtonCaption("Adjuntar");
+        uploadCV.addSucceededListener(uploader);
+        fl.addComponent(uploadCV);
 
         Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
@@ -159,6 +167,7 @@ public class EgresadoView extends VerticalLayout implements View {
         });
 
         fl.addComponent(button);
+
         return layout;
     }
 

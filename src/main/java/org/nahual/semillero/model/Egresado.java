@@ -32,8 +32,17 @@ public class Egresado {
     @Column(name = "OBSERVACIONES")
     private String observaciones;
 
-    // TODO: Agregar CV
+    @Column(name = "PATH_CV")
+    private String path_cv;
 
+
+    public String getPath_cv() {
+        return path_cv;
+    }
+
+    public void setPath_cv(String path_cv) {
+        this.path_cv = path_cv;
+    }
 
     public Long getId() {
         return id;
