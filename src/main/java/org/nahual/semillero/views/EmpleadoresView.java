@@ -3,6 +3,7 @@ package org.nahual.semillero.views;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -71,6 +72,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
         topLayout.addComponent(busquedaLayout);
         final TextField campoBusqueda = new TextField();
         Button searchButton = new Button("Buscar");
+        searchButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         searchButton.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
                 hbn.addContainerFilter(new ContainerFilter("empresa") {
