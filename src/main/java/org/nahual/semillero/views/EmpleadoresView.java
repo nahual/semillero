@@ -10,6 +10,9 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 
 public class EmpleadoresView extends VerticalLayout implements View {
@@ -92,18 +95,25 @@ public class EmpleadoresView extends VerticalLayout implements View {
             @Override
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
 
-                Button button = new Button("Delete");
+                Button button = new Button("Eliminar");
 
                 button.addClickListener(new Button.ClickListener() {
 
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
 
-                        Empleador empleadorDelete = hbn.getItem(itemId).getPojo();
-                        empleadorDelete.setActivo(false);
-                        hbn.updateEntity(empleadorDelete);
-                        hbn.removeItem(itemId);
-                        table.removeItem(itemId);
+                        TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
+                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                            @Override
+                            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                                Empleador empleadorEliminar = hbn.getItem(itemId).getPojo();
+                                empleadorEliminar.setActivo(false);
+                                hbn.updateEntity(empleadorEliminar);
+
+                            }
+                            });
+
+
                     }
                 });
 
