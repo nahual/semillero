@@ -36,8 +36,6 @@ public class EgresadoView extends VerticalLayout implements View {
 
     private FieldGroup fieldGroup;
     private Window window;
-
-    private ArrayList<String> cuatrimestresValidos = new ArrayList<String>();
     private HbnContainer<Egresado> container;
 
     public EgresadoView(HbnContainer<Egresado> hbn) {
@@ -132,7 +130,7 @@ public class EgresadoView extends VerticalLayout implements View {
         fl.addComponent(observacionesTF);
 
         // Adjuntar CV
-        CvUploader uploader = new CvUploader();
+        final CvUploader uploader = new CvUploader();
         Upload uploadCV = new Upload("Adjuntar CV", uploader);
         uploadCV.setStyleName("textField");
         uploadCV.setButtonCaption("Adjuntar");
@@ -151,11 +149,14 @@ public class EgresadoView extends VerticalLayout implements View {
                             if (nuevoItem) {
                                 hbn.saveEntity(((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
                             }
+
+                            // Actualizar destino de cv (si existe)
+                            uploader.relocateFileFor((Egresado) ((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
+
                             if (window != null)
                                 window.close();
                             else
                                 UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
-
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
                         }

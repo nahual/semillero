@@ -32,16 +32,16 @@ public class Egresado {
     @Column(name = "OBSERVACIONES")
     private String observaciones;
 
-    @Column(name = "PATH_CV")
-    private String path_cv;
+    @Column(name = "CV")
+    private String cv;
 
 
-    public String getPath_cv() {
-        return path_cv;
+    public String getCv() {
+        return cv;
     }
 
-    public void setPath_cv(String path_cv) {
-        this.path_cv = path_cv;
+    public void setCv(String cv) {
+        this.cv = cv;
     }
 
     public Long getId() {
