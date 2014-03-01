@@ -131,7 +131,7 @@ public class EgresadoView extends VerticalLayout implements View {
 
         // Adjuntar CV
         final CvUploader uploader = new CvUploader();
-        Upload uploadCV = new Upload("Adjuntar CV", uploader);
+        Upload uploadCV = new Upload("CV", uploader);
         uploadCV.setStyleName("textField");
         uploadCV.setButtonCaption("Adjuntar");
         uploadCV.addSucceededListener(uploader);
