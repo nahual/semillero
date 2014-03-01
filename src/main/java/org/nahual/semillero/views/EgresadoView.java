@@ -7,6 +7,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
@@ -158,7 +159,9 @@ public class EgresadoView extends VerticalLayout implements View {
                             else
                                 UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
                         } catch (FieldGroup.CommitException e) {
-                            e.printStackTrace();
+                            new Notification("Revisar los datos cargados!",
+                                    Notification.Type.ERROR_MESSAGE)
+                                    .show(Page.getCurrent());
                         }
 
                     }
