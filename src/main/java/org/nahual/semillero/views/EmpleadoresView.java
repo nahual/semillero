@@ -128,6 +128,26 @@ public class EmpleadoresView extends VerticalLayout implements View {
             }
         });
 
+        table.addGeneratedColumn("", new Table.ColumnGenerator() {
+
+            @Override
+            public Object generateCell(final Table source, final Object itemId, Object columnId) {
+
+                Button button = new Button("Nueva Búsqueda");
+
+                button.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Empleador empleador = hbn.getItem(itemId).getPojo();
+                        BusquedaView busquedaView = new BusquedaView(empleador);
+                    }
+                });
+
+                return button;
+            }
+        });
+
         layout.addComponent(table);
 
         layout.setMargin(true);

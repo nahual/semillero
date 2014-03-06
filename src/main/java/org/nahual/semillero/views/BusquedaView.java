@@ -3,6 +3,7 @@ package org.nahual.semillero.views;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
@@ -15,7 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Created by fdviosteam on 06/03/14.
  */
-public class BusquedaView {
+public class BusquedaView extends VerticalLayout implements View {
     private HbnContainer<Empleador> hbn;
     private TextArea descripcionTA;
     private TextField tituloTF;
@@ -23,6 +24,10 @@ public class BusquedaView {
     private DateField fechaFinDF;
     private CheckBox activaCB;
     private FieldGroup fieldGroup;
+
+    public BusquedaView(Empleador empleador) {
+
+    }
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
