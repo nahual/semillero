@@ -1,0 +1,7 @@
+# ignore all files ending with ~
+*~ 
+
+# ignore IntellijIdea's Files
+*.iml
+*.idea
+target/*

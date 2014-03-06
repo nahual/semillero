@@ -32,8 +32,17 @@ public class Egresado {
     @Column(name = "OBSERVACIONES")
     private String observaciones;
 
-    // TODO: Agregar CV
+    @Column(name = "CV")
+    private String cv;
 
+
+    public String getCv() {
+        return cv;
+    }
+
+    public void setCv(String cv) {
+        this.cv = cv;
+    }
 
     public Long getId() {
         return id;

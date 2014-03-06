@@ -7,12 +7,14 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.Page;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Cuatrimestre;
 import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Nodo;
+import org.nahual.utils.CvUploader;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -35,8 +37,6 @@ public class EgresadoView extends VerticalLayout implements View {
 
     private FieldGroup fieldGroup;
     private Window window;
-
-    private ArrayList<String> cuatrimestresValidos = new ArrayList<String>();
     private HbnContainer<Egresado> container;
 
     public EgresadoView(HbnContainer<Egresado> hbn) {
@@ -130,6 +130,13 @@ public class EgresadoView extends VerticalLayout implements View {
         observacionesTF = new TextArea("Observaciones");
         fl.addComponent(observacionesTF);
 
+        // Adjuntar CV
+        final CvUploader uploader = new CvUploader();
+        Upload uploadCV = new Upload("CV", uploader);
+        uploadCV.setStyleName("textField");
+        uploadCV.setButtonCaption("Adjuntar");
+        uploadCV.addSucceededListener(uploader);
+        fl.addComponent(uploadCV);
 
         Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
@@ -143,13 +150,18 @@ public class EgresadoView extends VerticalLayout implements View {
                             if (nuevoItem) {
                                 hbn.saveEntity(((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
                             }
+
+                            // Actualizar destino de cv (si existe)
+                            uploader.relocateFileFor((Egresado) ((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
+
                             if (window != null)
                                 window.close();
                             else
                                 UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
-
                         } catch (FieldGroup.CommitException e) {
-                            e.printStackTrace();
+                            new Notification("Revisar los datos cargados!",
+                                    Notification.Type.ERROR_MESSAGE)
+                                    .show(Page.getCurrent());
                         }
 
                     }
@@ -159,6 +171,7 @@ public class EgresadoView extends VerticalLayout implements View {
         });
 
         fl.addComponent(button);
+
         return layout;
     }
 

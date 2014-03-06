@@ -119,7 +119,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         Empleador empleadorDelete = hbn.getItem(itemId).getPojo();
                         empleadorDelete.setActivo(false);
                         hbn.updateEntity(empleadorDelete);
-                        hbn.removeItem(itemId);
+                        //hbn.removeItem(itemId);
                         table.removeItem(itemId);
                     }
                 });
