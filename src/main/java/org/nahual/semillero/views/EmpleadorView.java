@@ -19,7 +19,6 @@ import java.util.Collection;
 
 
 public class EmpleadorView extends VerticalLayout implements View {
-
     private boolean nuevoItem;
     private HbnContainer<Empleador> hbn;
     private TextArea observacionesTF;
