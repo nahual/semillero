@@ -109,7 +109,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
             }
         });
 
-        table.addGeneratedColumn("", new Table.ColumnGenerator() {
+        table.addGeneratedColumn("eliminar", new Table.ColumnGenerator() {
 
             @Override
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
@@ -138,7 +138,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
             }
         });
 
-        table.addGeneratedColumn("", new Table.ColumnGenerator() {
+        table.addGeneratedColumn("nueva busqueda", new Table.ColumnGenerator() {
 
             @Override
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
@@ -151,6 +151,14 @@ public class EmpleadoresView extends VerticalLayout implements View {
                     public void buttonClick(Button.ClickEvent event) {
                         Empleador empleador = hbn.getItem(itemId).getPojo();
                         BusquedaView busquedaView = new BusquedaView(empleador);
+
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("500px");
+                        window.setWidth("350px");
+                        busquedaView.setWindow(window);
+                        window.setContent(busquedaView);
                     }
                 });
 

@@ -14,6 +14,10 @@ public class Busqueda {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "EMPLEADOR_ID")
+    private Empleador empleador;
+
     @Column(name = "TITULO")
     private String titulo;
 
@@ -28,6 +32,14 @@ public class Busqueda {
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
+
+    public Empleador getEmpleador() {
+        return empleador;
+    }
+
+    public void setEmpleador(Empleador empleador) {
+        this.empleador = empleador;
+    }
 
     public String getTitulo() {
         return titulo;

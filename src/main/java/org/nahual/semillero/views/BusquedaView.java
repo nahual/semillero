@@ -1,32 +1,57 @@
 package org.nahual.semillero.views;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Collection;
+
 /**
  * Created by fdviosteam on 06/03/14.
  */
 public class BusquedaView extends VerticalLayout implements View {
-    private HbnContainer<Empleador> hbn;
+    private HbnContainer<Busqueda> hbn;
     private TextArea descripcionTA;
     private TextField tituloTF;
     private DateField fechaInicioDF;
     private DateField fechaFinDF;
     private CheckBox activaCB;
     private FieldGroup fieldGroup;
+    private Window window;
 
-    public BusquedaView(Empleador empleador) {
+    private void init() {
+        this.setSizeFull();
+        this.setMargin(true);
+        this.addComponent(createLayout());
+        fieldGroup = new FieldGroup();
+        fieldGroup.bind(this.tituloTF, "titulo");
+        fieldGroup.bind(this.fechaInicioDF, "fechaInicio");
+        fieldGroup.bind(this.fechaFinDF, "fechaFin");
+        fieldGroup.bind(this.activaCB, "activa");
+        fieldGroup.bind(this.descripcionTA, "descripcion");
+    }
 
+    public BusquedaView(Empleador unEmpleador) {
+        init();
+
+        this.hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+
+        Busqueda busqueda = new Busqueda();
+        busqueda.setEmpleador(unEmpleador);
+        Item newItem = new BeanItem<Busqueda>(busqueda);
+        setElemento(newItem);
     }
 
     @Override
@@ -77,8 +102,9 @@ public class BusquedaView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
-                            hbn.saveEntity(((BeanItem<Empleador>) fieldGroup.getItemDataSource()).getBean());
-                            UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+                            hbn.saveEntity(((BeanItem<Busqueda>) fieldGroup.getItemDataSource()).getBean());
+                            if (window != null)
+                                window.close();
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
                         }
@@ -89,5 +115,13 @@ public class BusquedaView extends VerticalLayout implements View {
         });
         fl.addComponent(button);
         return layout;
+    }
+
+    private void setElemento(Item elemento) {
+        fieldGroup.setItemDataSource(elemento);
+    }
+
+    public void setWindow(Window window) {
+        this.window = window;
     }
 }

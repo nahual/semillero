@@ -5,6 +5,7 @@
 
 <hibernate-configuration>
     <session-factory>
+        <mapping class="org.nahual.semillero.model.Busqueda"/>
         <mapping class="org.nahual.semillero.model.Empleador"/>
         <mapping class="org.nahual.semillero.model.Egresado"/>
         <mapping class="org.nahual.semillero.model.Nodo"/>
