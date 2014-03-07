@@ -18,33 +18,38 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Collection;
 
-/**
- * Created by fdviosteam on 06/03/14.
- */
 public class BusquedaView extends VerticalLayout implements View {
     private HbnContainer<Busqueda> hbn;
     private TextArea descripcionTA;
     private TextField tituloTF;
     private DateField fechaInicioDF;
     private DateField fechaFinDF;
+
     private CheckBox activaCB;
     private FieldGroup fieldGroup;
     private Window window;
 
-    private void init() {
+    private void init(Empleador unEmpleador) {
         this.setSizeFull();
         this.setMargin(true);
-        this.addComponent(createLayout());
+        this.addComponent(createLayout(unEmpleador));
         fieldGroup = new FieldGroup();
         fieldGroup.bind(this.tituloTF, "titulo");
         fieldGroup.bind(this.fechaInicioDF, "fechaInicio");
         fieldGroup.bind(this.fechaFinDF, "fechaFin");
         fieldGroup.bind(this.activaCB, "activa");
         fieldGroup.bind(this.descripcionTA, "descripcion");
+
+        // Se aplica un estilo particular a los captions de los fields
+        for (Object field : fieldGroup.getFields()) {
+            ((AbstractComponent) field).setStyleName("textField");
+            if (field instanceof AbstractTextField)
+                ((AbstractTextField) field).setNullRepresentation("");
+        }
     }
 
     public BusquedaView(Empleador unEmpleador) {
-        init();
+        init(unEmpleador);
 
         this.hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
 
@@ -58,11 +63,11 @@ public class BusquedaView extends VerticalLayout implements View {
     public void enter(ViewChangeListener.ViewChangeEvent event) {
     }
 
-    private VerticalLayout createLayout() {
+    private VerticalLayout createLayout(Empleador unEmpleador) {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloEmpleador = new Label("Nuevo Empleador");
+        Label tituloEmpleador = new Label("Nueva Busqueda");
         tituloEmpleador.setStyleName("titulo");
 
         layout.addComponent(tituloEmpleador);
@@ -71,6 +76,11 @@ public class BusquedaView extends VerticalLayout implements View {
         layout.addComponent(fl);
 
         fl.setSizeUndefined();
+
+        TextField empleador = new TextField("Empresa");
+        empleador.setValue(unEmpleador.getEmpresa());
+        empleador.setReadOnly(true);
+        fl.addComponent(empleador);
 
         tituloTF = new TextField("Título");
         fl.addComponent(tituloTF);
@@ -82,7 +92,7 @@ public class BusquedaView extends VerticalLayout implements View {
         fechaInicioDF.setRequired(true);
         fechaInicioDF.setRequiredError("Fecha Inicio no puede estar vacio");
 
-        fechaFinDF = new DateField("Fecha Inicio");
+        fechaFinDF = new DateField("Fecha Fin");
         fl.addComponent(fechaFinDF);
         fechaFinDF.setRequired(true);
         fechaFinDF.setRequiredError("Fecha Fin no puede estar vacio");
