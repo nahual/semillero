@@ -109,14 +109,15 @@ public class EmpleadoresView extends VerticalLayout implements View {
             }
         });
 
-        table.addGeneratedColumn("eliminar", new Table.ColumnGenerator() {
+        table.addGeneratedColumn("Acciones", new Table.ColumnGenerator() {
 
             @Override
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
+                HorizontalLayout cell = new HorizontalLayout();
 
-                Button button = new Button("Eliminar");
+                Button eliminarButton = new Button("Eliminar");
 
-                button.addClickListener(new Button.ClickListener() {
+                eliminarButton.addClickListener(new Button.ClickListener() {
 
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -133,19 +134,11 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         });
                     }
                 });
+                cell.addComponent(eliminarButton);
 
-                return button;
-            }
-        });
+                Button nuevaBusquedaButton = new Button("Nueva Búsqueda");
 
-        table.addGeneratedColumn("nueva busqueda", new Table.ColumnGenerator() {
-
-            @Override
-            public Object generateCell(final Table source, final Object itemId, Object columnId) {
-
-                Button button = new Button("Nueva Búsqueda");
-
-                button.addClickListener(new Button.ClickListener() {
+                nuevaBusquedaButton.addClickListener(new Button.ClickListener() {
 
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -161,8 +154,9 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         window.setContent(busquedaView);
                     }
                 });
+                cell.addComponent(nuevaBusquedaButton);
 
-                return button;
+                return cell;
             }
         });
 
