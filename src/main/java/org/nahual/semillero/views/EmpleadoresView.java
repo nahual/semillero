@@ -9,7 +9,9 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Empleador;
+import org.nahual.semillero.ui.SemilleroAppUI;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -155,6 +157,20 @@ public class EmpleadoresView extends VerticalLayout implements View {
                     }
                 });
                 cell.addComponent(nuevaBusquedaButton);
+
+                Button busquedasActivas = new Button("Busquedas Activas");
+
+                busquedasActivas.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Empleador empleador = hbn.getItem(itemId).getPojo();
+                        ((SemilleroAppUI) getUI()).getMarco().getBusquedasEmpleadorView().setEmpleador(empleador);
+                        getUI().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_BUSQUEDAS_EMPLEADOR);
+                    }
+                });
+
+                cell.addComponent(busquedasActivas);
 
                 return cell;
             }
