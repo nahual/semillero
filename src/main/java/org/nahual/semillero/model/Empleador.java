@@ -1,6 +1,7 @@
 package org.nahual.semillero.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * User: fdv
@@ -22,8 +23,13 @@ public class Empleador {
     @Column(name = "CONTACTO")
     private String contacto;
 
-    @Column(name = "OBSERVACIONES")
-    private String observaciones;
+    @OneToMany
+    @JoinTable(
+            name="OBSERVACIONES_EMPLEADOR",
+            joinColumns = @JoinColumn( name="EMPLEADOR_ID"),
+            inverseJoinColumns = @JoinColumn( name="OBSERVACION_ID")
+    )
+    private Set<Observacion> observaciones;
 
     @Column(name = "ACTIVO")
     private Boolean activo;
@@ -44,20 +50,20 @@ public class Empleador {
         this.contacto = contacto;
     }
 
-    public String getObservaciones() {
-        return observaciones;
-    }
-
-    public void setObservaciones(String observaciones) {
-        this.observaciones = observaciones;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<Observacion> getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(Set<Observacion> observaciones) {
+        this.observaciones = observaciones;
     }
 
     public Boolean getActivo() {

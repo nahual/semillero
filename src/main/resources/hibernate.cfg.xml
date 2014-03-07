@@ -10,5 +10,6 @@
         <mapping class="org.nahual.semillero.model.Egresado"/>
         <mapping class="org.nahual.semillero.model.Nodo"/>
         <mapping class="org.nahual.semillero.model.Cuatrimestre"/>
+        <mapping class="org.nahual.semillero.model.Observacion"/>
     </session-factory>
 </hibernate-configuration>
