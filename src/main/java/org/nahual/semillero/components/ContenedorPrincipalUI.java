@@ -9,6 +9,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
     public static final String VIEW_EMPLEADORES = "empleadores";
     public static final String VIEW_NUEVO_EMPLEADOR = "nuevoEmpleador";
     public static final String VIEW_EGRESADOS = "egresados";
+    public static final String VIEW_NUEVO_EGRESADO = "nuevoEgresado";
     public static final String VIEW_BUSQUEDAS = "busquedas";
 
     private MenuBar barraDeMenu = new MenuBar();
@@ -43,11 +44,13 @@ public class ContenedorPrincipalUI extends CustomComponent {
     public void setupMenu() {
         BusquedasView busquedasView = new BusquedasView();
         EmpleadoresView empleadoresView = new EmpleadoresView();
+        EgresadosView egresadosView = new EgresadosView();
 
         ErrorView errorView = new ErrorView();
 
         navigator.addView(VIEW_EMPLEADORES, empleadoresView);
-        navigator.addView(VIEW_EGRESADOS, EgresadoView.class);
+        navigator.addView(VIEW_EGRESADOS, egresadosView);
+        navigator.addView(VIEW_NUEVO_EGRESADO, EgresadoView.class);
         navigator.addView(VIEW_BUSQUEDAS, busquedasView);
         navigator.addView(VIEW_NUEVO_EMPLEADOR, EmpleadorView.class);
         navigator.setErrorView(errorView);

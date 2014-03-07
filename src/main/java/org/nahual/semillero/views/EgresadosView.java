@@ -15,19 +15,44 @@ public class EgresadosView extends VerticalLayout implements View {
     public EgresadosView(){
         this.setSizeFull();
         this.setMargin(true);
-        Label label = new Label("Egresados");
-        this.addComponent(label);
+        final VerticalLayout layout = new VerticalLayout();
 
-          /* Tabla de empleadores */
+        Label label = new Label("Egresados");
+        layout.addComponent(label);
+
+
+        final HbnContainer<Egresado> hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getSession());
+        final HorizontalLayout topLayout = new HorizontalLayout();
+        topLayout.setWidth("50%");
+
+        layout.addComponent(topLayout);
+
+
+        Button botonNuevoEgresado = new Button("Nuevo Egresado");
+        botonNuevoEgresado.addClickListener(new Button.ClickListener() {
+            public void buttonClick(Button.ClickEvent event) {
+                Window window = new Window();
+                getUI().addWindow(window);
+                window.setModal(true);
+                window.setHeight("600px");
+                window.setWidth("500px");
+                EgresadoView egresadoView = new EgresadoView(hbn);
+                egresadoView.setWindow(window);
+                window.setContent(egresadoView);
+            }
+        });
+        topLayout.addComponent(botonNuevoEgresado);
+
+          /* Tabla de egresados */
         final Table table = new Table();
         table.setWidth("70%");
-        final HbnContainer<Egresado> hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getSession());
+
         table.setContainerDataSource(hbn);
         table.addContainerProperty("Id", Long.class, null);
         table.setVisibleColumns(new Object[]{"nombre", "telefonoFijo", "telefonoMovil", "correoElectronico", "nodo",
                                                 "cuatrimestre", "observaciones"});
 
-        this.addComponent(table);
+        layout.addComponent(table);
 
         table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
             @Override
@@ -35,14 +60,20 @@ public class EgresadosView extends VerticalLayout implements View {
                 Window window = new Window();
                 getUI().addWindow(window);
                 window.setModal(true);
-                window.setHeight("500px");
-                window.setWidth("350px");
+                window.setHeight("600px");
+                window.setWidth("500px");
                 EgresadoView egresadoView = new EgresadoView();
                 egresadoView.setElemento(event.getItem());
                 egresadoView.setContainer(hbn);
                 window.setContent(egresadoView);
             }
         });
+
+
+        layout.setMargin(true);
+        topLayout.setMargin(true);
+
+        this.addComponent(layout);
     }
 
     @Override
