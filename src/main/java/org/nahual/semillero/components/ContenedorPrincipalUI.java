@@ -9,12 +9,15 @@ public class ContenedorPrincipalUI extends CustomComponent {
     public static final String VIEW_EMPLEADORES = "empleadores";
     public static final String VIEW_NUEVO_EMPLEADOR = "nuevoEmpleador";
     public static final String VIEW_EGRESADOS = "egresados";
+    public static final String VIEW_NUEVO_EGRESADO = "nuevoEgresado";
     public static final String VIEW_BUSQUEDAS = "busquedas";
+    public static final String VIEW_BUSQUEDAS_EMPLEADOR = "busquedas_empleador";
 
     private MenuBar barraDeMenu = new MenuBar();
     private VerticalLayout mainLayout;
     private Navigator navigator;
     private ComponentContainer body;
+    private BusquedasView busquedasEmpleadorView;
 
     public ContenedorPrincipalUI() {
         buildMainLayout();
@@ -41,15 +44,18 @@ public class ContenedorPrincipalUI extends CustomComponent {
     }
 
     public void setupMenu() {
-        BusquedasView busquedasView = new BusquedasView();
+        busquedasEmpleadorView = new BusquedasView();
         EmpleadoresView empleadoresView = new EmpleadoresView();
+        EgresadosView egresadosView = new EgresadosView();
 
         ErrorView errorView = new ErrorView();
 
         navigator.addView(VIEW_EMPLEADORES, empleadoresView);
-        navigator.addView(VIEW_EGRESADOS, EgresadoView.class);
-        navigator.addView(VIEW_BUSQUEDAS, busquedasView);
+        navigator.addView(VIEW_EGRESADOS, egresadosView);
+        navigator.addView(VIEW_NUEVO_EGRESADO, EgresadoView.class);
+        navigator.addView(VIEW_BUSQUEDAS, BusquedasView.class);
         navigator.addView(VIEW_NUEVO_EMPLEADOR, EmpleadorView.class);
+        navigator.addView(VIEW_BUSQUEDAS_EMPLEADOR, busquedasEmpleadorView);
         navigator.setErrorView(errorView);
 
         barraDeMenu.addItem("Empleadores", null, new MenuBar.Command() {
@@ -74,5 +80,9 @@ public class ContenedorPrincipalUI extends CustomComponent {
 
     public ComponentContainer getBody() {
         return body;
+    }
+
+    public BusquedasView getBusquedasEmpleadorView() {
+        return busquedasEmpleadorView;
     }
 }

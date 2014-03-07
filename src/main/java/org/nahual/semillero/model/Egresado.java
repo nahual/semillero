@@ -35,6 +35,9 @@ public class Egresado {
     @Column(name = "CV")
     private String cv;
 
+    @Column(name = "ACTIVO")
+    private Boolean activo;
+
 
     public String getCv() {
         return cv;
@@ -108,4 +111,11 @@ public class Egresado {
         this.observaciones = observaciones;
     }
 
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 }

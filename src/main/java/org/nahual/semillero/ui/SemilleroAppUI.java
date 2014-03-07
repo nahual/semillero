@@ -39,4 +39,7 @@ public class SemilleroAppUI extends UI {
         return navigator;
     }
 
+    public ContenedorPrincipalUI getMarco() {
+        return marco;
+    }
 }
