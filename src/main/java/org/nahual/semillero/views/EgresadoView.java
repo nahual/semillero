@@ -42,7 +42,9 @@ public class EgresadoView extends VerticalLayout implements View {
     public EgresadoView(HbnContainer<Egresado> hbn) {
         this.hbn = hbn;
         init();
-        Item newItem = new BeanItem<Egresado>(new Egresado());
+        Egresado egresado = new Egresado();
+        egresado.setActivo(true);
+        Item newItem = new BeanItem<Egresado>(egresado);
         this.nuevoItem = true;
         setElemento(newItem);
     }
