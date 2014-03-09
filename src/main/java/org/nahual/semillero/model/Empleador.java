@@ -67,4 +67,26 @@ public class Empleador {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
+
+    @Override
+    public String toString() {
+        return empresa;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Empleador empleador = (Empleador) o;
+
+        if (!id.equals(empleador.id)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
