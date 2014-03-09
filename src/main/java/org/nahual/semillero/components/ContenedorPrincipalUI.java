@@ -2,6 +2,7 @@ package org.nahual.semillero.components;
 
 import com.vaadin.navigator.Navigator;
 import com.vaadin.ui.*;
+import org.nahual.semillero.model.Postulacion;
 import org.nahual.semillero.views.*;
 
 
@@ -11,6 +12,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
     public static final String VIEW_EGRESADOS = "egresados";
     public static final String VIEW_NUEVO_EGRESADO = "nuevoEgresado";
     public static final String VIEW_BUSQUEDAS = "busquedas";
+    public static final String VIEW_POSTULACIONES = "postulaciones";
     public static final String VIEW_BUSQUEDAS_EMPLEADOR = "busquedas_empleador";
 
     private MenuBar barraDeMenu = new MenuBar();
@@ -55,6 +57,8 @@ public class ContenedorPrincipalUI extends CustomComponent {
         navigator.addView(VIEW_NUEVO_EGRESADO, EgresadoView.class);
         navigator.addView(VIEW_BUSQUEDAS, BusquedasView.class);
         navigator.addView(VIEW_NUEVO_EMPLEADOR, EmpleadorView.class);
+        navigator.addView(VIEW_POSTULACIONES, PostulacionesView.class);
+
         navigator.addView(VIEW_BUSQUEDAS_EMPLEADOR, busquedasEmpleadorView);
         navigator.setErrorView(errorView);
 
@@ -74,6 +78,12 @@ public class ContenedorPrincipalUI extends CustomComponent {
             @Override
             public void menuSelected(MenuBar.MenuItem menuItem) {
                 navigator.navigateTo(VIEW_BUSQUEDAS);
+            }
+        });
+        barraDeMenu.addItem("Postulaciones", null, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem menuItem) {
+                navigator.navigateTo(VIEW_POSTULACIONES);
             }
         });
     }
