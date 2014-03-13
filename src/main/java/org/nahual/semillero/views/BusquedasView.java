@@ -4,8 +4,6 @@ package org.nahual.semillero.views;
 import com.vaadin.data.Property;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -13,20 +11,20 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Busqueda;
-import org.nahual.semillero.model.Cuatrimestre;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 
 public class BusquedasView extends VerticalLayout implements View {
 
+    private static final String CONTAINER_FILTER_ACTIVA = "activa";
+    private static final String CONTAINER_FILTER_EMPLEADOR = "empleador";
+
     private HbnContainer<Busqueda> hbn;
     private Empleador empleador;
     private ComboBox combo;
+    private CheckBox activaCB;
 
     public BusquedasView() {
         this.setSizeFull();
@@ -51,16 +49,16 @@ public class BusquedasView extends VerticalLayout implements View {
         layout.addComponent(topLayout);
         combo = new ComboBox("Empleador");
         this.cargarEmpleadores();
-        layout.addComponent(combo);
         combo.setTextInputAllowed(false);
         combo.setImmediate(true);
         combo.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 empleador = (Empleador) ((ComboBox) ((Field.ValueChangeEvent) event).getComponent()).getValue();
-                changeEmpleador();
+                cambiarEmpleador();
             }
         });
+        layout.addComponent(combo);
 
 
         /* Tabla de empleadores */
@@ -69,16 +67,32 @@ public class BusquedasView extends VerticalLayout implements View {
 
         hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getSession());
 
-        hbn.addContainerFilter(new ContainerFilter("activa") {
+        table.setContainerDataSource(hbn);
+        table.setVisibleColumns(new Object[]{"titulo", "descripcion", "fechaInicio", "fechaFin", "activa"});
+        table.addGeneratedColumn("empresa", new Table.ColumnGenerator() {
             @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+            public Object generateCell(Table source, Object itemId, Object columnId) {
+                return hbn.getItem(itemId).getPojo().getEmpleador().getEmpresa();
             }
         });
 
         if (empleador != null)
             combo.setValue(empleador);
-        table.setContainerDataSource(hbn);
+
+        activaCB = new CheckBox("Busquedas Activas");
+        activaCB.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                cambiarFiltroBusquedaActiva();
+            }
+        });
+        activaCB.setImmediate(true);
+        activaCB.setValue(true);
+
+        layout.addComponent(activaCB);
+
+        cambiarFiltroBusquedaActiva();
+
 
         layout.addComponent(table);
 
@@ -88,10 +102,19 @@ public class BusquedasView extends VerticalLayout implements View {
         this.addComponent(layout);
     }
 
+    private void cambiarFiltroBusquedaActiva() {
+        if (activaCB.getValue())
+            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
+                @Override
+                public Criterion getFieldCriterion(String fullPropertyName) {
+                    return Restrictions.eq(fullPropertyName, activaCB.getValue());
+                }
+            });
+        else
+            hbn.removeContainerFilters(CONTAINER_FILTER_ACTIVA);
 
-    public void setEmpleador(final Empleador empleador) {
-        this.empleador = empleador;
     }
+
 
     private void cargarEmpleadores() {
         HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
@@ -103,15 +126,19 @@ public class BusquedasView extends VerticalLayout implements View {
         }
     }
 
-    private void changeEmpleador() {
+    private void cambiarEmpleador() {
         if (this.empleador != null)
-            hbn.addContainerFilter(new ContainerFilter("empleador") {
+            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EMPLEADOR) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, empleador);
                 }
             });
         else
-            hbn.removeContainerFilters("empleador");
+            hbn.removeContainerFilters(CONTAINER_FILTER_EMPLEADOR);
+    }
+
+    public void setEmpleador(final Empleador empleador) {
+        this.empleador = empleador;
     }
 }
