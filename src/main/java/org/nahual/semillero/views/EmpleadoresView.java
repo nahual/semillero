@@ -37,7 +37,6 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
         /* Tabla de empleadores */
         final Table table = new Table();
-        table.setWidth("50%");
 
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
 
