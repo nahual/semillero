@@ -7,11 +7,6 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.Window;
 import org.hibernate.SessionFactory;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.model.Observacion;
@@ -20,7 +15,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.awt.*;
 import java.util.Date;
 
 /**
@@ -67,6 +61,7 @@ public class ObservacionView extends VerticalLayout implements View {
         observacion = new Observacion();
         observacion.setFecha(new Date());
         unEmpleador.getObservaciones().add(observacion);
+
         Item newItem = new BeanItem<Observacion>(observacion);
         setElemento(newItem);
     }
