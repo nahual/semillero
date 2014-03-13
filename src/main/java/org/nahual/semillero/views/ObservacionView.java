@@ -7,33 +7,31 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.TextArea;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.Window;
 import org.hibernate.SessionFactory;
-import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Empleador;
+import org.nahual.semillero.model.Observacion;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collection;
+import java.awt.*;
+import java.util.Date;
 
-
-public class EmpleadorView extends VerticalLayout implements View {
-    private boolean nuevoItem;
-    private HbnContainer<Empleador> hbn;
-    private TextField empresaTF;
-    private TextField contactoTF;
+/**
+ * Created by fdviosteam on 07/03/14.
+ */
+public class ObservacionView extends VerticalLayout implements View {
+    private Observacion observacion;
+    private HbnContainer<Observacion> hbn;
     private FieldGroup fieldGroup;
-
-    public EmpleadorView(HbnContainer<Empleador> hbn) {
-        init();
-        this.hbn = hbn;
-        Empleador empleador = new Empleador();
-        empleador.setActivo(true);
-        Item newItem = new BeanItem<Empleador>(empleador);
-        this.nuevoItem = true;
-        setElemento(newItem);
-    }
+    private TextArea observacionTA;
+    private Window window;
 
     public Window getWindow() {
         return window;
@@ -43,45 +41,41 @@ public class EmpleadorView extends VerticalLayout implements View {
         this.window = window;
     }
 
-    public Window window;
-
-    public EmpleadorView() {
-        this(new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class)));
-
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
     }
 
-    private void init() {
+    private void init(Empleador unEmpleador) {
         this.setSizeFull();
         this.setMargin(true);
-        this.addComponent(createLayout());
+        this.addComponent(createLayout(unEmpleador));
         fieldGroup = new FieldGroup();
-        fieldGroup.bind(this.empresaTF, "empresa");
-        fieldGroup.bind(this.contactoTF, "contacto");
-        Collection<Field<?>> fields = fieldGroup.getFields();
-        for (Field<?> field : fields) {
-            if (field instanceof AbstractTextField) {
+        fieldGroup.bind(this.observacionTA, "texto");
+
+        // Se aplica un estilo particular a los captions de los fields
+        for (Object field : fieldGroup.getFields()) {
+            ((AbstractComponent) field).setStyleName("textField");
+            if (field instanceof AbstractTextField)
                 ((AbstractTextField) field).setNullRepresentation("");
-            }
         }
     }
 
-    public EmpleadorView(Item item) {
-        init();
-        this.nuevoItem = false;
-        setElemento(item);
+    public ObservacionView(Empleador unEmpleador) {
+        init(unEmpleador);
+
+        this.hbn = new HbnContainer<Observacion>(Observacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        observacion = new Observacion();
+        observacion.setFecha(new Date());
+        unEmpleador.getObservaciones().add(observacion);
+        Item newItem = new BeanItem<Observacion>(observacion);
+        setElemento(newItem);
     }
 
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
-        this.empresaTF.setValue("");
-        this.contactoTF.setValue("");
-    }
-
-    private VerticalLayout createLayout() {
+    private VerticalLayout createLayout(Empleador unEmpleador) {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloEmpleador = new Label("Nuevo Empleador");
+        Label tituloEmpleador = new Label("Nueva Busqueda");
         tituloEmpleador.setStyleName("titulo");
 
         layout.addComponent(tituloEmpleador);
@@ -91,18 +85,13 @@ public class EmpleadorView extends VerticalLayout implements View {
 
         fl.setSizeUndefined();
 
-        empresaTF = new TextField("Empresa");
-        fl.addComponent(empresaTF);
+        TextField empleador = new TextField("Empresa");
+        empleador.setValue(unEmpleador.getEmpresa());
+        empleador.setReadOnly(true);
+        fl.addComponent(empleador);
 
-
-        empresaTF.setRequired(true);
-        empresaTF.setRequiredError("Empresa no puede estar vacio");
-
-        contactoTF = new TextField("Contacto");
-        fl.addComponent(contactoTF);
-
-        contactoTF.setRequired(true);
-        contactoTF.setRequiredError("Contacto no puede estar vacio");
+        observacionTA = new TextArea("Descripción");
+        fl.addComponent(observacionTA);
 
         Button button = new Button("Aceptar");
         button.addClickListener(new Button.ClickListener() {
@@ -113,13 +102,9 @@ public class EmpleadorView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
-                            if (nuevoItem) {
-                                hbn.saveEntity(((BeanItem<Empleador>) fieldGroup.getItemDataSource()).getBean());
-                            }
+                            hbn.saveEntity(((BeanItem<Observacion>) fieldGroup.getItemDataSource()).getBean());
                             if (window != null)
                                 window.close();
-                            else
-                                UI.getCurrent().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
                         } catch (FieldGroup.CommitException e) {
                             e.printStackTrace();
                         }

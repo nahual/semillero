@@ -37,7 +37,6 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
         /* Tabla de empleadores */
         final Table table = new Table();
-        table.setWidth("50%");
 
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
 
@@ -171,6 +170,26 @@ public class EmpleadoresView extends VerticalLayout implements View {
                 });
 
                 cell.addComponent(busquedasActivas);
+
+                Button nuevaObservacionButton = new Button("Nueva Observación");
+
+                nuevaObservacionButton.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Empleador empleador = hbn.getItem(itemId).getPojo();
+                        ObservacionView observacionView = new ObservacionView(empleador);
+
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("500px");
+                        window.setWidth("350px");
+                        observacionView.setWindow(window);
+                        window.setContent(observacionView);
+                    }
+                });
+                cell.addComponent(nuevaObservacionButton);
 
                 return cell;
             }
