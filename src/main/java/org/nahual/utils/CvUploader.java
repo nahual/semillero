@@ -64,10 +64,12 @@ public class CvUploader implements Upload.Receiver, Upload.SucceededListener {
                     cv.delete();
             }
 
-            cvTmp = new File(rootPath + tmpFolder + filename);
-            cv = new File(rootPath + "/" + egresado.getId().toString() + "/" + filename);
-            copyFile(cvTmp, cv);
-            egresado.setCv(cv.getName());
+            if (filename != null) {
+                cvTmp = new File(rootPath + tmpFolder + filename);
+                cv = new File(rootPath + "/" + egresado.getId().toString() + "/" + filename);
+                copyFile(cvTmp, cv);
+                egresado.setCv(cv.getName());
+            }
 
         } catch (final java.io.FileNotFoundException e) {
             new Notification("No se pudo acceder al directorio!",

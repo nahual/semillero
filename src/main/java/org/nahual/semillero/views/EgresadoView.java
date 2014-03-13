@@ -42,7 +42,9 @@ public class EgresadoView extends VerticalLayout implements View {
     public EgresadoView(HbnContainer<Egresado> hbn) {
         this.hbn = hbn;
         init();
-        Item newItem = new BeanItem<Egresado>(new Egresado());
+        Egresado egresado = new Egresado();
+        egresado.setActivo(true);
+        Item newItem = new BeanItem<Egresado>(egresado);
         this.nuevoItem = true;
         setElemento(newItem);
     }
@@ -136,6 +138,7 @@ public class EgresadoView extends VerticalLayout implements View {
         uploadCV.setStyleName("textField");
         uploadCV.setButtonCaption("Adjuntar");
         uploadCV.addSucceededListener(uploader);
+
         fl.addComponent(uploadCV);
 
         Button button = new Button("Aceptar");
@@ -149,10 +152,13 @@ public class EgresadoView extends VerticalLayout implements View {
                             fieldGroup.commit();
                             if (nuevoItem) {
                                 hbn.saveEntity(((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
-                            }
 
-                            // Actualizar destino de cv (si existe)
-                            uploader.relocateFileFor((Egresado) ((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
+                                // Actualizar destino de cv (si existe)
+                                uploader.relocateFileFor(((BeanItem<Egresado>) fieldGroup.getItemDataSource()).getBean());
+                            } else {
+                                // Actualizar destino de cv (si existe)
+                                uploader.relocateFileFor((Egresado) ((HbnContainer.EntityItem) fieldGroup.getItemDataSource()).getPojo());
+                            }
 
                             if (window != null)
                                 window.close();

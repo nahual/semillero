@@ -24,9 +24,9 @@ public class EgresadosView extends VerticalLayout implements View {
         this.setMargin(true);
         final VerticalLayout layout = new VerticalLayout();
 
-        Label label = new Label("Egresados");
-        layout.addComponent(label);
-
+        Label tituloEgresados = new Label("Egresados");
+        layout.addComponent(tituloEgresados);
+        tituloEgresados.setStyleName("titulo");
 
         final HbnContainer<Egresado> hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getSession());
 
@@ -126,25 +126,25 @@ public class EgresadosView extends VerticalLayout implements View {
                 });
                 cell.addComponent(eliminarButton);
 
-//                Button nuevaBusquedaButton = new Button("Nueva Búsqueda");
-//
-//                nuevaBusquedaButton.addClickListener(new Button.ClickListener() {
-//
-//                    @Override
-//                    public void buttonClick(Button.ClickEvent event) {
-//                        Empleador empleador = hbn.getItem(itemId).getPojo();
-//                        BusquedaView busquedaView = new BusquedaView(empleador);
-//
-//                        Window window = new Window();
-//                        getUI().addWindow(window);
-//                        window.setModal(true);
-//                        window.setHeight("500px");
-//                        window.setWidth("350px");
-//                        busquedaView.setWindow(window);
-//                        window.setContent(busquedaView);
-//                    }
-//                });
-//                cell.addComponent(nuevaBusquedaButton);
+                Button nuevaPostulacionButton = new Button("Nueva postulación");
+
+                nuevaPostulacionButton.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Egresado egresado = hbn.getItem(itemId).getPojo();
+                        PostulacionView postulacionView = new PostulacionView(egresado);
+
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("500px");
+                        window.setWidth("350px");
+                        postulacionView.setWindow(window);
+                        window.setContent(postulacionView);
+                    }
+                });
+                cell.addComponent(nuevaPostulacionButton);
 
                 return cell;
             }
@@ -160,9 +160,8 @@ public class EgresadosView extends VerticalLayout implements View {
                 window.setModal(true);
                 window.setHeight("600px");
                 window.setWidth("500px");
-                EgresadoView egresadoView = new EgresadoView();
-                egresadoView.setElemento(event.getItem());
-                egresadoView.setContainer(hbn);
+                EgresadoView egresadoView = new EgresadoView(event.getItem());
+                egresadoView.setWindow(window);
                 window.setContent(egresadoView);
             }
         });
