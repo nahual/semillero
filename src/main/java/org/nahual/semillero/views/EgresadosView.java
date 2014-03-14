@@ -38,7 +38,7 @@ public class EgresadosView extends VerticalLayout implements View {
         });
 
         final HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("50%");
+        topLayout.setWidth("90%");
 
         layout.addComponent(topLayout);
 
@@ -92,7 +92,7 @@ public class EgresadosView extends VerticalLayout implements View {
 
           /* Tabla de egresados */
         final Table table = new Table();
-        table.setWidth("70%");
+        table.setWidth("90%");
 
         table.setContainerDataSource(hbn);
         table.addContainerProperty("Id", Long.class, null);
