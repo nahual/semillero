@@ -6,6 +6,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -116,8 +117,8 @@ public class EmpleadoresView extends VerticalLayout implements View {
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
                 HorizontalLayout cell = new HorizontalLayout();
 
-                Button eliminarButton = new Button("Eliminar");
-
+                Button eliminarButton = new Button("");
+                eliminarButton.setDescription("Eliminar empleador");
                 eliminarButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -135,10 +136,12 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         });
                     }
                 });
+                eliminarButton.setStyleName("iconButton");
+                eliminarButton.setIcon(new ThemeResource("img/eliminar.png"), "Eliminar empleador");
                 cell.addComponent(eliminarButton);
 
-                Button nuevaBusquedaButton = new Button("Nueva Búsqueda");
-
+                Button nuevaBusquedaButton = new Button("");
+                nuevaBusquedaButton.setDescription("Ingresar nueva búsqueda");
                 nuevaBusquedaButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -155,10 +158,12 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         window.setContent(busquedaView);
                     }
                 });
+                nuevaBusquedaButton.setStyleName("iconButton");
+                nuevaBusquedaButton.setIcon(new ThemeResource("img/nueva_busqueda.png"), "Ingresar nueva búsqueda");
                 cell.addComponent(nuevaBusquedaButton);
 
-                Button busquedasActivas = new Button("Busquedas Activas");
-
+                Button busquedasActivas = new Button("");
+                busquedasActivas.setDescription("Ver búsquedas activas del empleador");
                 busquedasActivas.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -168,11 +173,12 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         getUI().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_BUSQUEDAS_EMPLEADOR);
                     }
                 });
-
+                busquedasActivas.setStyleName("iconButton");
+                busquedasActivas.setIcon(new ThemeResource("img/busquedas_activas.png"), "Ver búsquedas activas del empleador");
                 cell.addComponent(busquedasActivas);
 
-                Button nuevaObservacionButton = new Button("Nueva Observación");
-
+                Button nuevaObservacionButton = new Button("");
+                nuevaObservacionButton.setDescription("Agregar observación");
                 nuevaObservacionButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -189,6 +195,8 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         window.setContent(observacionView);
                     }
                 });
+                nuevaObservacionButton.setStyleName("iconButton");
+                nuevaObservacionButton.setIcon(new ThemeResource("img/agregar_observacion.png"), "Agregar observación");
                 cell.addComponent(nuevaObservacionButton);
 
                 return cell;
