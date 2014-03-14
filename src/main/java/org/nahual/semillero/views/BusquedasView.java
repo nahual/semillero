@@ -7,12 +7,15 @@ import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
+import org.nahual.utils.StsContainerFilter;
+import org.nahual.utils.StsHbnContainer;
 
 import java.util.ArrayList;
 
@@ -21,7 +24,7 @@ public class BusquedasView extends VerticalLayout implements View {
     private static final String CONTAINER_FILTER_ACTIVA = "activa";
     private static final String CONTAINER_FILTER_EMPLEADOR = "empleador";
 
-    private HbnContainer<Busqueda> hbn;
+    private StsHbnContainer<Busqueda> hbn;
     private Empleador empleador;
     private ComboBox combo;
     private CheckBox activaCB;
@@ -65,7 +68,15 @@ public class BusquedasView extends VerticalLayout implements View {
         final Table table = new Table();
         table.setWidth("50%");
 
-        hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getSession());
+        hbn = new StsHbnContainer<Busqueda>(Busqueda.class, SpringHelper.getSession());
+
+        hbn.addContainerFilter(new StsContainerFilter("filtro_empleado_activo") {
+            @Override
+            protected Criteria customizeCriteria(Criteria criteria) {
+                return criteria.createAlias("empleador", "empleador")
+                        .add(Restrictions.eq("empleador.activo", Boolean.TRUE));
+            }
+        });
 
         table.setContainerDataSource(hbn);
         table.setVisibleColumns(new Object[]{"titulo", "descripcion", "fechaInicio", "fechaFin", "activa"});
@@ -104,7 +115,7 @@ public class BusquedasView extends VerticalLayout implements View {
 
     private void cambiarFiltroBusquedaActiva() {
         if (activaCB.getValue())
-            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
+            hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_ACTIVA) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, activaCB.getValue());
@@ -128,7 +139,7 @@ public class BusquedasView extends VerticalLayout implements View {
 
     private void cambiarEmpleador() {
         if (this.empleador != null)
-            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EMPLEADOR) {
+            hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_EMPLEADOR) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, empleador);
