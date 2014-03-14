@@ -23,12 +23,10 @@ public class Empleador {
     @Column(name = "CONTACTO")
     private String contacto;
 
-    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            name="OBSERVACIONES_EMPLEADOR",
-            joinColumns = @JoinColumn( name="EMPLEADOR_ID"),
-            inverseJoinColumns = @JoinColumn( name="OBSERVACION_ID")
-    )
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinTable
+            (name="OBSERVACIONES_EMPLEADOR", joinColumns={@JoinColumn(name="EMPLEADOR_ID", referencedColumnName="id")}
+                    , inverseJoinColumns={@JoinColumn(name="OBSERVACION_ID", referencedColumnName="id")})
     private Set<Observacion> observaciones;
 
     @Column(name = "ACTIVO")

@@ -121,6 +121,16 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
+                        Empleador empleador = hbn.getItem(itemId).getPojo();
+                        ObservacionesView observacionesView = new ObservacionesView(empleador);
+
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("500px");
+                        window.setWidth("350px");
+                        observacionesView.setWindow(window);
+                        window.setContent(observacionesView);
                     }
                 });
                 cell.addComponent(verObservacionesButton);

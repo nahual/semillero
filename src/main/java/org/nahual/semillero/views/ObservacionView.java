@@ -22,7 +22,7 @@ import java.util.Date;
  */
 public class ObservacionView extends VerticalLayout implements View {
     private Observacion observacion;
-    private HbnContainer<Observacion> hbn;
+    private HbnContainer<Empleador> hbn;
     private FieldGroup fieldGroup;
     private TextArea observacionTA;
     private Window window;
@@ -57,7 +57,7 @@ public class ObservacionView extends VerticalLayout implements View {
     public ObservacionView(Empleador unEmpleador) {
         init(unEmpleador);
 
-        this.hbn = new HbnContainer<Observacion>(Observacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        this.hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         observacion = new Observacion();
         observacion.setFecha(new Date());
         unEmpleador.getObservaciones().add(observacion);
@@ -66,7 +66,7 @@ public class ObservacionView extends VerticalLayout implements View {
         setElemento(newItem);
     }
 
-    private VerticalLayout createLayout(Empleador unEmpleador) {
+    private VerticalLayout createLayout(final Empleador unEmpleador) {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
@@ -97,7 +97,7 @@ public class ObservacionView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
-                            hbn.saveEntity(((BeanItem<Observacion>) fieldGroup.getItemDataSource()).getBean());
+                            hbn.updateEntity( unEmpleador);
                             if (window != null)
                                 window.close();
                         } catch (FieldGroup.CommitException e) {
