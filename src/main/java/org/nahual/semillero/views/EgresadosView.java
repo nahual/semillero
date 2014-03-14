@@ -9,8 +9,10 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
+import org.nahual.semillero.ui.SemilleroAppUI;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -145,6 +147,19 @@ public class EgresadosView extends VerticalLayout implements View {
                     }
                 });
                 cell.addComponent(nuevaPostulacionButton);
+
+                Button postulacionesActivas = new Button("Postulaciones activas");
+
+                postulacionesActivas.addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Egresado egresado = hbn.getItem(itemId).getPojo();
+                        ((SemilleroAppUI) getUI()).getMarco().getPostulacionesView().setEgresado(egresado);
+                        getUI().getNavigator().navigateTo(ContenedorPrincipalUI.VIEW_POSTULACIONES);
+                    }
+                });
+
+                cell.addComponent(postulacionesActivas);
 
                 return cell;
             }

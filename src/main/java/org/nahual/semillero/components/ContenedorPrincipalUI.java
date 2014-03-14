@@ -20,6 +20,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
     private Navigator navigator;
     private ComponentContainer body;
     private BusquedasView busquedasEmpleadorView;
+    private PostulacionesView postulacionesView;
 
     public ContenedorPrincipalUI() {
         buildMainLayout();
@@ -47,6 +48,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
 
     public void setupMenu() {
         busquedasEmpleadorView = new BusquedasView();
+        postulacionesView = new PostulacionesView();
         EmpleadoresView empleadoresView = new EmpleadoresView();
         EgresadosView egresadosView = new EgresadosView();
 
@@ -60,6 +62,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
         navigator.addView(VIEW_POSTULACIONES, PostulacionesView.class);
 
         navigator.addView(VIEW_BUSQUEDAS_EMPLEADOR, busquedasEmpleadorView);
+        navigator.addView(VIEW_POSTULACIONES, postulacionesView);
         navigator.setErrorView(errorView);
 
         barraDeMenu.addItem("Empleadores", null, new MenuBar.Command() {
@@ -94,5 +97,9 @@ public class ContenedorPrincipalUI extends CustomComponent {
 
     public BusquedasView getBusquedasEmpleadorView() {
         return busquedasEmpleadorView;
+    }
+
+    public PostulacionesView getPostulacionesView() {
+        return postulacionesView;
     }
 }
