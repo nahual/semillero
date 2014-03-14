@@ -23,7 +23,7 @@ public class Empleador {
     @Column(name = "CONTACTO")
     private String contacto;
 
-    @OneToMany
+    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name="OBSERVACIONES_EMPLEADOR",
             joinColumns = @JoinColumn( name="EMPLEADOR_ID"),

@@ -49,7 +49,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
 
         table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"empresa", "contacto", "observaciones"});
+        table.setVisibleColumns(new Object[]{"empresa", "contacto"});
 
         /* topLayout */
         Button botonNuevoEmpleador = new Button("Nuevo Empleador");
@@ -83,7 +83,6 @@ public class EmpleadoresView extends VerticalLayout implements View {
                         return Restrictions.or(
                                 Restrictions.ilike("contacto", value),
                                 Restrictions.or(
-                                        Restrictions.ilike("observaciones", value),
                                         Restrictions.ilike("empresa", value)
                                 )
                         );
@@ -107,6 +106,26 @@ public class EmpleadoresView extends VerticalLayout implements View {
                 EmpleadorView empleadorView = new EmpleadorView(event.getItem());
                 empleadorView.setWindow(window);
                 window.setContent(empleadorView);
+            }
+        });
+
+        table.addGeneratedColumn("Observaciones", new Table.ColumnGenerator() {
+
+            @Override
+            public Object generateCell(final Table source, final Object itemId, Object columnId) {
+                HorizontalLayout cell = new HorizontalLayout();
+
+                Button verObservacionesButton = new Button("Ver Observaciones");
+
+                verObservacionesButton.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                    }
+                });
+                cell.addComponent(verObservacionesButton);
+
+                return cell;
             }
         });
 
