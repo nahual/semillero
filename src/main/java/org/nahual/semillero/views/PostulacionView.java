@@ -34,6 +34,7 @@ public class PostulacionView extends VerticalLayout implements View {
     private ComboBox empleador;
     private ComboBox busqueda;
     private TextArea descripcionTF;
+    private CheckBox activaCB;
 
     private FieldGroup fieldGroup;
     private Window window;
@@ -59,6 +60,7 @@ public class PostulacionView extends VerticalLayout implements View {
         fieldGroup.bind(this.empleador, "empleador");
         fieldGroup.bind(this.busqueda, "busqueda");
         fieldGroup.bind(this.descripcionTF, "descripcion");
+        fieldGroup.bind(this.activaCB, "activa");
 
         // Se aplica un estilo particular a los captions de los fields
         for (Object field : fieldGroup.getFields()) {
@@ -126,6 +128,9 @@ public class PostulacionView extends VerticalLayout implements View {
         };
         busqueda.addValueChangeListener(listenerBusquedas);
         fl.addComponent(busqueda);
+
+        activaCB = new CheckBox("Activa");
+        fl.addComponent(activaCB);
 
         descripcionTF = new TextArea("Descripción");
         fl.addComponent(descripcionTF);

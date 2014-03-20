@@ -1,14 +1,13 @@
 package org.nahual.semillero.views;
 
 
+import com.vaadin.data.Property;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Busqueda;
@@ -17,20 +16,21 @@ import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
 
+import java.util.ArrayList;
+
 public class PostulacionesView extends VerticalLayout implements View {
+
+    private static final String CONTAINER_FILTER_ACTIVA = "activa";
+    private static final String CONTAINER_FILTER_EGRESADO = "egresado";
 
     private HbnContainer<Postulacion> hbn;
     private Egresado egresado;
+    private CheckBox activaCB;
+    private ComboBox egresadoCB;
 
     public PostulacionesView() {
         this.setSizeFull();
         this.setMargin(true);
-    }
-
-    public PostulacionesView(Egresado egresado) {
-        this.setSizeFull();
-        this.setMargin(true);
-        this.egresado = egresado;
     }
 
     @Override
@@ -39,6 +39,8 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void init() {
+        hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
+
         this.removeAllComponents();
         final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout topLayout = new HorizontalLayout();
@@ -50,29 +52,64 @@ public class PostulacionesView extends VerticalLayout implements View {
         layout.addComponent(tituloPostulaciones);
         layout.addComponent(topLayout);
 
+        egresadoCB = new ComboBox("Egresado");
+        this.cargarEgresados();
+        egresadoCB.setTextInputAllowed(false);
+        egresadoCB.setImmediate(true);
+        egresadoCB.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                egresado = (Egresado) ((ComboBox) ((Field.ValueChangeEvent) event).getComponent()).getValue();
+                cambiarEgresado();
+            }
+        });
+        cambiarEgresado();
+        layout.addComponent(egresadoCB);
 
         /* Tabla de postulaciones */
         final Table table = new Table();
         table.setWidth("50%");
 
-        hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
+        table.setContainerDataSource(hbn);
+        table.setVisibleColumns(new Object[]{"descripcion"});
 
-        hbn.addContainerFilter(new ContainerFilter("activa") {
+        table.addGeneratedColumn("egresado", new Table.ColumnGenerator() {
             @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+            public Object generateCell(Table source, Object itemId, Object columnId) {
+                return hbn.getItem(itemId).getPojo().getEgresado().getNombre();
+            }
+        });
+        table.addGeneratedColumn("empleador", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, Object itemId, Object columnId) {
+                Empleador empleador = hbn.getItem(itemId).getPojo().getEmpleador();
+                if (empleador != null)
+                    return empleador.getEmpresa();
+                return null;
+            }
+        });
+        table.addGeneratedColumn("busqueda", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, Object itemId, Object columnId) {
+                Busqueda busqueda = hbn.getItem(itemId).getPojo().getBusqueda();
+                if (busqueda != null)
+                    return busqueda.toString();
+                return null;
             }
         });
 
-        if (this.egresado != null)
-            hbn.addContainerFilter(new ContainerFilter("egresado") {
-                @Override
-                public Criterion getFieldCriterion(String fullPropertyName) {
-                    return Restrictions.eq(fullPropertyName, egresado);
-                }
-            });
-        table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"egresado", "empleador", "busqueda", "descripcion"});
+        activaCB = new CheckBox("Postulaciones Activas");
+        activaCB.addValueChangeListener(new Property.ValueChangeListener() {
+            @Override
+            public void valueChange(Property.ValueChangeEvent event) {
+                cambiarFiltroPostulacionActiva();
+            }
+        });
+        activaCB.setImmediate(true);
+        activaCB.setValue(true);
+        cambiarFiltroPostulacionActiva();
+
+        layout.addComponent(activaCB);
 
         layout.addComponent(table);
 
@@ -80,6 +117,39 @@ public class PostulacionesView extends VerticalLayout implements View {
         topLayout.setMargin(true);
 
         this.addComponent(layout);
+
+    }
+
+    private void cambiarFiltroPostulacionActiva() {
+        hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
+            @Override
+            public Criterion getFieldCriterion(String fullPropertyName) {
+                return Restrictions.eq(fullPropertyName, activaCB.getValue());
+            }
+        });
+    }
+
+    private void cargarEgresados() {
+        HbnContainer<Egresado> hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+
+        ArrayList ids = (ArrayList) hbn.getItemIds();
+        for (Object id : ids) {
+            if (hbn.getItem(id).getPojo().getActivo()) {
+                Egresado tmp = (hbn.getItem(id).getPojo());
+                egresadoCB.addItem(tmp);
+            }
+        }
+
+        egresadoCB.select(egresado);
+    }
+
+    private void cambiarEgresado() {
+        hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EGRESADO) {
+            @Override
+            public Criterion getFieldCriterion(String fullPropertyName) {
+                return Restrictions.eq(fullPropertyName, egresado);
+            }
+        });
     }
 
     public void setEgresado(final Egresado egresado) {

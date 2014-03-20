@@ -118,4 +118,10 @@ public class Egresado {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
 }
