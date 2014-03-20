@@ -32,7 +32,6 @@
     display: block;
   }
 
-
   .v-button-iconButton .v-button-wrap,
   .v-disabled.v-button-iconButton .v-button-wrap,
   .v-button-iconButton:focus, .v-button-iconButton:active,
@@ -47,11 +46,16 @@
     box-shadow: none;
   }
 
-  .iconButton.focus,  .iconButton.active,
+  .iconButton.focus, .iconButton.active,
   .iconButton.v-pressed, .iconButton.v-button-wrap {
     box-shadow: lightgray;
     background-image: none;
     background: none;
   }
   /* Insert your theme rules here */
+
+  .margins {
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
 }
