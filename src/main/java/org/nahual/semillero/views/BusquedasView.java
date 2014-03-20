@@ -4,6 +4,7 @@ package org.nahual.semillero.views;
 import com.vaadin.data.Property;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -17,8 +18,11 @@ import org.nahual.utils.SpringHelper;
 import org.nahual.utils.StsContainerFilter;
 import org.nahual.utils.StsHbnContainer;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class BusquedasView extends VerticalLayout implements View {
 
@@ -56,7 +60,13 @@ public class BusquedasView extends VerticalLayout implements View {
         tituloEmpleadores.setHeight("100%");
         layout.addComponent(tituloEmpleadores);
         layout.addComponent(topLayout);
+
+        final HorizontalLayout filtros = new HorizontalLayout();
+        topLayout.setWidth("100%");
+        layout.addComponent(filtros);
+
         combo = new ComboBox("Empleador");
+        combo.addStyleName("margins");
         this.cargarEmpleadores();
         combo.setTextInputAllowed(false);
         combo.setImmediate(true);
@@ -67,7 +77,7 @@ public class BusquedasView extends VerticalLayout implements View {
                 cambiarEmpleador();
             }
         });
-        layout.addComponent(combo);
+        filtros.addComponent(combo);
 
 
         /* Tabla de empleadores */
@@ -92,11 +102,21 @@ public class BusquedasView extends VerticalLayout implements View {
                 return hbn.getItem(itemId).getPojo().getEmpleador().getEmpresa();
             }
         });
+        StringToDateConverter converter = new StringToDateConverter() {
+            @Override
+            public DateFormat getFormat(Locale locale) {
+                return new SimpleDateFormat("dd-MM-yyyy");
+            }
+        };
+
+        table.setConverter("fechaInicio", converter);
+        table.setConverter("fechaFin", converter);
 
         if (empleador != null)
             combo.setValue(empleador);
 
         activaCB = new CheckBox("Mostrar solo Busquedas Activas");
+        activaCB.addStyleName("margins");
         activaCB.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
@@ -111,6 +131,8 @@ public class BusquedasView extends VerticalLayout implements View {
         cambiarFiltroBusquedaActiva();
         fechaInicioDF = new DateField("Fecha Inicio");
         fechaInicioDF.setImmediate(true);
+        fechaInicioDF.addStyleName("margins");
+        fechaInicioDF.setDateFormat("dd-MM-yyyy");
         fechaInicioDF.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
@@ -118,10 +140,12 @@ public class BusquedasView extends VerticalLayout implements View {
                 cambiarFechaInicio();
             }
         });
-        layout.addComponent(fechaInicioDF);
+        filtros.addComponent(fechaInicioDF);
 
         fechaFinDF = new DateField("Fecha Fin");
         fechaFinDF.setImmediate(true);
+        fechaFinDF.setDateFormat("dd-MM-yyyy");
+        fechaFinDF.addStyleName("margins");
         fechaFinDF.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
@@ -129,7 +153,7 @@ public class BusquedasView extends VerticalLayout implements View {
                 cambiarFechaFin();
             }
         });
-        layout.addComponent(fechaFinDF);
+        filtros.addComponent(fechaFinDF);
         layout.addComponent(table);
 
         layout.setMargin(true);

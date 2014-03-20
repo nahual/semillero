@@ -36,7 +36,7 @@
   .v-button-iconButton .v-button-wrap,
   .v-disabled.v-button-iconButton .v-button-wrap,
   .v-button-iconButton:focus, .v-button-iconButton:active,
-  .v-button-iconButton.v-pressed {
+  .v-button-iconButton.v-pressed, .v-button-iconButton .v-button-wrap, .v-button-iconButton.iconButton:active .v-button-wrap, .v-button-iconButton.iconButton.v-pressed .v-button-wrap, .v-button-iconButton.iconButton:focus .v-button-wrap {
     background: transparent;
     border: none;
     -webkit-border-radius: 0;
@@ -60,4 +60,9 @@
     overflow: hidden;
   }
   /* Insert your theme rules here */
+
+  .margins {
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
 }
