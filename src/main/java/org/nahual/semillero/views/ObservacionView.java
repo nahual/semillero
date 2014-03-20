@@ -70,7 +70,7 @@ public class ObservacionView extends VerticalLayout implements View {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloEmpleador = new Label("Nueva Busqueda");
+        Label tituloEmpleador = new Label("Nueva Observación");
         tituloEmpleador.setStyleName("titulo");
 
         layout.addComponent(tituloEmpleador);
