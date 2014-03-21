@@ -27,8 +27,8 @@ public class Busqueda {
     @Column(name = "FECHA_FIN")
     private Date fechaFin;
 
-    @Column(name = "ACTIVA")
-    private Boolean activa;
+    @Column(name = "ACTIVA", columnDefinition = "SMALLINT DEFAULT 1")
+    private boolean activa;
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
@@ -65,11 +65,11 @@ public class Busqueda {
         this.fechaFin = fechaFin;
     }
 
-    public Boolean getActiva() {
+    public boolean getActiva() {
         return activa;
     }
 
-    public void setActiva(Boolean activa) {
+    public void setActiva(boolean activa) {
         this.activa = activa;
     }
 

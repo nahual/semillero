@@ -98,6 +98,7 @@ public class BusquedaView extends VerticalLayout implements View {
         fechaFinDF.setRequiredError("Fecha Fin no puede estar vacio");
 
         activaCB = new CheckBox("Activa");
+        activaCB.setValue(false);
         fl.addComponent(activaCB);
 
         descripcionTA = new TextArea("Descripción");

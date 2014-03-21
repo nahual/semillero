@@ -23,14 +23,14 @@ public class Empleador {
     @Column(name = "CONTACTO")
     private String contacto;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable
-            (name="OBSERVACIONES_EMPLEADOR", joinColumns={@JoinColumn(name="EMPLEADOR_ID", referencedColumnName="id")}
-                    , inverseJoinColumns={@JoinColumn(name="OBSERVACION_ID", referencedColumnName="id")})
+            (name = "OBSERVACIONES_EMPLEADOR", joinColumns = {@JoinColumn(name = "EMPLEADOR_ID", referencedColumnName = "id")}
+                    , inverseJoinColumns = {@JoinColumn(name = "OBSERVACION_ID", referencedColumnName = "id")})
     private Set<Observacion> observaciones;
 
-    @Column(name = "ACTIVO")
-    private Boolean activo;
+    @Column(name = "ACTIVO", columnDefinition = "SMALLINT DEFAULT 1")
+    private Boolean activo = true;
 
     public String getEmpresa() {
         return empresa;
