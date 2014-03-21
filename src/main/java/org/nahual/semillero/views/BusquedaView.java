@@ -80,6 +80,7 @@ public class BusquedaView extends VerticalLayout implements View {
         TextField empleador = new TextField("Empresa");
         empleador.setValue(unEmpleador.getEmpresa());
         empleador.setReadOnly(true);
+        empleador.addStyleName("readOnly");
         fl.addComponent(empleador);
 
         tituloTF = new TextField("Título");
