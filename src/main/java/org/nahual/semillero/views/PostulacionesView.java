@@ -15,6 +15,9 @@ import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 
@@ -53,6 +56,7 @@ public class PostulacionesView extends VerticalLayout implements View {
         layout.addComponent(topLayout);
 
         egresadoCB = new ComboBox("Egresado");
+        egresadoCB.addStyleName("margins");
         this.cargarEgresados();
         egresadoCB.setTextInputAllowed(false);
         egresadoCB.setImmediate(true);
@@ -63,7 +67,8 @@ public class PostulacionesView extends VerticalLayout implements View {
                 cambiarEgresado();
             }
         });
-        cambiarEgresado();
+        //cambiarEgresado();
+        egresadoCB.setValue(egresado);
         layout.addComponent(egresadoCB);
 
         /* Tabla de postulaciones */
@@ -71,7 +76,7 @@ public class PostulacionesView extends VerticalLayout implements View {
         table.setWidth("50%");
 
         table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"descripcion"});
+        table.setVisibleColumns(new Object[]{"descripcion", "activa"});
 
         table.addGeneratedColumn("egresado", new Table.ColumnGenerator() {
             @Override
@@ -98,7 +103,8 @@ public class PostulacionesView extends VerticalLayout implements View {
             }
         });
 
-        activaCB = new CheckBox("Postulaciones Activas");
+        activaCB = new CheckBox("Mostrar solo postulaciones activas");
+        activaCB.addStyleName("margins");
         activaCB.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
@@ -111,6 +117,37 @@ public class PostulacionesView extends VerticalLayout implements View {
 
         layout.addComponent(activaCB);
 
+        // Botones de acciones
+        table.addGeneratedColumn("Acciones", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(final Table source, final Object itemId, Object columnId) {
+                HorizontalLayout cell = new HorizontalLayout();
+
+                Button eliminarButton = new Button("Eliminar");
+
+                eliminarButton.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
+                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                            @Override
+                            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                                Postulacion postulacionEliminar = hbn.getItem(itemId).getPojo();
+                                postulacionEliminar.setActiva(false);
+                                hbn.updateEntity(postulacionEliminar);
+
+                            }
+                        });
+                    }
+                });
+                cell.addComponent(eliminarButton);
+
+                return cell;
+            }
+        });
+
         layout.addComponent(table);
 
         layout.setMargin(true);
@@ -121,12 +158,15 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void cambiarFiltroPostulacionActiva() {
-        hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
-            @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, activaCB.getValue());
-            }
-        });
+        if (activaCB.getValue())
+            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
+                @Override
+                public Criterion getFieldCriterion(String fullPropertyName) {
+                    return Restrictions.eq(fullPropertyName, activaCB.getValue());
+                }
+            });
+        else
+            hbn.removeContainerFilters(CONTAINER_FILTER_ACTIVA);
     }
 
     private void cargarEgresados() {
@@ -139,17 +179,18 @@ public class PostulacionesView extends VerticalLayout implements View {
                 egresadoCB.addItem(tmp);
             }
         }
-
-        egresadoCB.select(egresado);
     }
 
     private void cambiarEgresado() {
-        hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EGRESADO) {
-            @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, egresado);
-            }
-        });
+        if (egresado != null)
+            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EGRESADO) {
+                @Override
+                public Criterion getFieldCriterion(String fullPropertyName) {
+                    return Restrictions.eq(fullPropertyName, egresado);
+                }
+            });
+        else
+            hbn.removeContainerFilters(CONTAINER_FILTER_EGRESADO);
     }
 
     public void setEgresado(final Egresado egresado) {
