@@ -2,8 +2,10 @@ package org.nahual.semillero.views;
 
 
 import com.vaadin.data.Property;
+import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -12,11 +14,15 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 import org.nahual.utils.StsContainerFilter;
 import org.nahual.utils.StsHbnContainer;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -100,6 +106,30 @@ public class BusquedasView extends VerticalLayout implements View {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 return hbn.getItem(itemId).getPojo().getEmpleador().getEmpresa();
+            }
+        });
+        table.addGeneratedColumn("activa", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+                final CheckBox activo = new CheckBox("");
+                activo.setValue(hbn.getItem(itemId).getPojo().getActiva());
+                activo.setImmediate(true);
+                activo.addValueChangeListener(new Property.ValueChangeListener() {
+                    @Override
+                    public void valueChange(Property.ValueChangeEvent event) {
+                        TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
+                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                            @Override
+                            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                                Busqueda busqueda = hbn.getItem(itemId).getPojo();
+                                busqueda.setActiva(activo.getValue());
+                                hbn.updateEntity(busqueda);
+
+                            }
+                        });
+                    }
+                });
+                return activo;
             }
         });
         StringToDateConverter converter = new StringToDateConverter() {
