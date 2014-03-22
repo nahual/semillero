@@ -6,6 +6,7 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
@@ -14,6 +15,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.converters.EmpleadorToIdConverter;
 import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
@@ -39,23 +41,31 @@ public class PostulacionView extends VerticalLayout implements View {
     private FieldGroup fieldGroup;
     private Window window;
 
+    public PostulacionView(Item item) {
+        this.hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Egresado egresadoPostulacion = ((Postulacion) ((HbnContainer.EntityItem) (item)).getPojo()).getEgresado();
+        init(egresadoPostulacion);
+        this.nuevoItem = false;
+        setElemento(item);
+    }
+
     public PostulacionView(Egresado unEgresado) {
         init(unEgresado);
-
         this.hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-
         Postulacion postulacion = new Postulacion();
         postulacion.setEgresado(unEgresado);
         postulacion.setActiva(true);
         Item newItem = new BeanItem<Postulacion>(postulacion);
-        nuevoItem = true;
+        this.nuevoItem = true;
         setElemento(newItem);
     }
 
     private void init(Egresado unEgresado) {
         this.setSizeFull();
         this.setMargin(true);
+
         this.addComponent(createLayout(unEgresado));
+
         fieldGroup = new FieldGroup();
         fieldGroup.bind(this.empleador, "empleador");
         fieldGroup.bind(this.busqueda, "busqueda");
@@ -92,19 +102,24 @@ public class PostulacionView extends VerticalLayout implements View {
         egresadoTF = new TextField("Egresado");
         egresadoTF.setValue(unEgresado.getNombre());
         egresadoTF.setReadOnly(true);
+        egresadoTF.addStyleName("readOnly");
         fl.addComponent(egresadoTF);
 
         empleador = new ComboBox("Empleador");
         empleador.setRequired(true);
         empleador.setRequiredError("El empleador es un dato obligatorio");
         empleador.setImmediate(true);
+
         this.cargarEmpleadores();
         Property.ValueChangeListener listener = new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 Busqueda valorBusqueda = (Busqueda) busqueda.getValue();
-                if ((valorBusqueda == null) || (valorBusqueda != null && valorBusqueda.getEmpleador() != empleador.getValue()))
-                    cargarBusquedas((Empleador) empleador.getValue());
+                if ((valorBusqueda == null) || (valorBusqueda != null && valorBusqueda.getEmpleador() != empleador.getValue())) {
+                    if (empleador.getValue() instanceof Empleador || empleador.getValue() == null)
+                        cargarBusquedas((Empleador) empleador.getValue());
+                }
+
             }
         };
         empleador.addValueChangeListener(listener);
@@ -120,11 +135,14 @@ public class PostulacionView extends VerticalLayout implements View {
         Property.ValueChangeListener listenerBusquedas = new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
-                Busqueda valorBusqueda = (Busqueda) busqueda.getValue();
-                if (valorBusqueda != null) {
-                    empleador.select(valorBusqueda.getEmpleador());
+                if (busqueda.getValue() instanceof Busqueda) {
+                    Busqueda valorBusqueda = (Busqueda) busqueda.getValue();
+                    if (valorBusqueda != null) {
+                        empleador.setValue(valorBusqueda.getEmpleador());
+                    }
                 }
             }
+
         };
         busqueda.addValueChangeListener(listenerBusquedas);
         fl.addComponent(busqueda);
@@ -172,6 +190,53 @@ public class PostulacionView extends VerticalLayout implements View {
 
     public void setElemento(Item elemento) {
         fieldGroup.setItemDataSource(elemento);
+        if (!nuevoItem) {
+            if (this.busqueda.getValue() == null) {
+                this.refrescarComboEmpleador();
+            } else {
+                this.refrescarComboBusqueda();
+            }
+        }
+    }
+
+    private void refrescarComboEmpleador() {
+        HbnContainer hbnEmpleador = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Empleador empleadorTmp;
+
+        hbnEmpleador.addContainerFilter(new ContainerFilter("id") {
+            @Override
+            public Criterion getFieldCriterion(String fullPropertyName) {
+                return Restrictions.eq(fullPropertyName, empleador.getValue());
+            }
+        });
+
+        ArrayList ids = (ArrayList) hbnEmpleador.getItemIds();
+
+        // Solo debe haber uno ya que se filtró por id de empleador
+        for (Object id : ids) {
+            empleadorTmp = (Empleador) hbnEmpleador.getItem(id).getPojo();
+            this.empleador.select(empleadorTmp);
+        }
+    }
+
+    private void refrescarComboBusqueda() {
+        HbnContainer hbnBusqueda = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Busqueda busquedaTmp;
+
+        hbnBusqueda.addContainerFilter(new ContainerFilter("id") {
+            @Override
+            public Criterion getFieldCriterion(String fullPropertyName) {
+                return Restrictions.eq(fullPropertyName, busqueda.getValue());
+            }
+        });
+
+        ArrayList ids = (ArrayList) hbnBusqueda.getItemIds();
+        // Solo debe haber uno ya que se filtró por id de búsqueda
+        for (Object id : ids) {
+            busquedaTmp = (Busqueda) hbnBusqueda.getItem(id).getPojo();
+            this.busqueda.select(busquedaTmp);
+        }
+
     }
 
     public Window getWindow() {
@@ -184,11 +249,13 @@ public class PostulacionView extends VerticalLayout implements View {
 
     private void cargarEmpleadores() {
         this.empleador.removeAllItems();
-        HbnContainer hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        HbnContainer hbnEmpleador = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Empleador empleadorTmp;
 
-        ArrayList ids = (ArrayList) hbn.getItemIds();
+        ArrayList ids = (ArrayList) hbnEmpleador.getItemIds();
         for (Object id : ids) {
-            empleador.addItem(((Empleador) (hbn.getItem(id).getPojo())));
+            empleadorTmp = (Empleador) hbnEmpleador.getItem(id).getPojo();
+            empleador.addItem(empleadorTmp);
         }
 
     }
@@ -196,9 +263,11 @@ public class PostulacionView extends VerticalLayout implements View {
     private void cargarBusquedas(final Empleador empleador) {
         this.busqueda.removeAllItems();
         HbnContainer hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        Busqueda busquedaTmp;
 
         // Solamente cargar las búsquedas del empleador dado
         if (empleador != null) {
+            hbn.removeAllContainerFilters();
             hbn.addContainerFilter(new ContainerFilter("empleador") {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
@@ -208,6 +277,7 @@ public class PostulacionView extends VerticalLayout implements View {
         }
         // o bien, todas las activas si no se dió un empleador en particular
         else {
+            hbn.removeAllContainerFilters();
             hbn.addContainerFilter(new ContainerFilter("activa") {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
@@ -218,7 +288,8 @@ public class PostulacionView extends VerticalLayout implements View {
 
         ArrayList ids = (ArrayList) hbn.getItemIds();
         for (Object id : ids) {
-            busqueda.addItem(((Busqueda) (hbn.getItem(id).getPojo())));
+            busquedaTmp = (Busqueda) hbn.getItem(id).getPojo();
+            busqueda.addItem(busquedaTmp);
         }
 
     }

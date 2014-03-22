@@ -4,8 +4,10 @@ package org.nahual.semillero.views;
 import com.vaadin.data.Property;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -73,10 +75,10 @@ public class PostulacionesView extends VerticalLayout implements View {
 
         /* Tabla de postulaciones */
         final Table table = new Table();
-        table.setWidth("50%");
+        table.setWidth("75%");
 
         table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"descripcion", "activa"});
+        table.setVisibleColumns(new Object[]{"descripcion"});
 
         table.addGeneratedColumn("egresado", new Table.ColumnGenerator() {
             @Override
@@ -100,6 +102,56 @@ public class PostulacionesView extends VerticalLayout implements View {
                 if (busqueda != null)
                     return busqueda.toString();
                 return null;
+            }
+        });
+
+        table.addGeneratedColumn("activa", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+                final CheckBox activo = new CheckBox("");
+                activo.setValue(hbn.getItem(itemId).getPojo().getActiva());
+                activo.setImmediate(true);
+                activo.addValueChangeListener(new Property.ValueChangeListener() {
+                    @Override
+                    public void valueChange(Property.ValueChangeEvent event) {
+                        TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
+                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                            @Override
+                            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                                Postulacion postulacion = hbn.getItem(itemId).getPojo();
+                                postulacion.setActiva(activo.getValue());
+                                hbn.updateEntity(postulacion);
+
+                            }
+                        });
+                    }
+                });
+                return activo;
+            }
+        });
+
+        table.addGeneratedColumn("exitosa", new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, final Object itemId, Object columnId) {
+                final CheckBox exitosa = new CheckBox("");
+                exitosa.setValue(hbn.getItem(itemId).getPojo().getExitosa());
+                exitosa.setImmediate(true);
+                exitosa.addValueChangeListener(new Property.ValueChangeListener() {
+                    @Override
+                    public void valueChange(Property.ValueChangeEvent event) {
+                        TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
+                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                            @Override
+                            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                                Postulacion postulacion = hbn.getItem(itemId).getPojo();
+                                postulacion.setExitosa(exitosa.getValue());
+                                hbn.updateEntity(postulacion);
+
+                            }
+                        });
+                    }
+                });
+                return exitosa;
             }
         });
 
@@ -142,6 +194,8 @@ public class PostulacionesView extends VerticalLayout implements View {
                         });
                     }
                 });
+                eliminarButton.setStyleName("iconButton");
+                eliminarButton.setIcon(new ThemeResource("img/eliminar.png"), "Eliminar postulación");
                 cell.addComponent(eliminarButton);
 
                 return cell;
@@ -149,6 +203,21 @@ public class PostulacionesView extends VerticalLayout implements View {
         });
 
         layout.addComponent(table);
+
+        // Edición de postulaciones
+        table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                Window window = new Window();
+                getUI().addWindow(window);
+                window.setModal(true);
+                window.setHeight("600px");
+                window.setWidth("500px");
+                PostulacionView postulacionView = new PostulacionView(event.getItem());
+                postulacionView.setWindow(window);
+                window.setContent(postulacionView);
+            }
+        });
 
         layout.setMargin(true);
         topLayout.setMargin(true);
