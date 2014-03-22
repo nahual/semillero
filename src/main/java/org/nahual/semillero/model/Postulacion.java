@@ -27,7 +27,7 @@ public class Postulacion {
     private Boolean activa;
 
     @Column(name = "EXITOSA")
-    private Boolean exitosa;
+    private Boolean exitosa = false;
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
