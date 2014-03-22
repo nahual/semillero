@@ -27,7 +27,7 @@ public class Busqueda {
     @Column(name = "FECHA_FIN")
     private Date fechaFin;
 
-    @Column(name = "ACTIVA")
+    @Column(name = "ACTIVA", columnDefinition = "SMALLINT DEFAULT 1")
     private boolean activa;
 
     @Column(name = "FICTICIA")
