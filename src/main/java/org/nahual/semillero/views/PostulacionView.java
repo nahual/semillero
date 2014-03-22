@@ -240,15 +240,9 @@ public class PostulacionView extends VerticalLayout implements View {
                 }
             });
         }
-        // o bien, todas las activas (evitando ficticias) si no se dió un empleador en particular
+        // o bien, todas (evitando ficticias) si no se dió un empleador en particular
         else {
             hbn.removeAllContainerFilters();
-            hbn.addContainerFilter(new ContainerFilter("activa") {
-                @Override
-                public Criterion getFieldCriterion(String fullPropertyName) {
-                    return Restrictions.eq(fullPropertyName, Boolean.TRUE);
-                }
-            });
             hbn.addContainerFilter(new ContainerFilter("ficticia") {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
