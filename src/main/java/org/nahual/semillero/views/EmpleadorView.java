@@ -9,6 +9,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
@@ -113,8 +114,12 @@ public class EmpleadorView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
+
                             if (nuevoItem) {
-                                hbn.saveEntity(((BeanItem<Empleador>) fieldGroup.getItemDataSource()).getBean());
+                                Empleador empleador = ((BeanItem<Empleador>) fieldGroup.getItemDataSource()).getBean();
+                                hbn.saveEntity(empleador);
+                                // Para cada empleador debe haber una (y solo una) búsqueda ficticia
+                                crearBusquedaFicticia(empleador);
                             }
                             if (window != null)
                                 window.close();
@@ -134,5 +139,14 @@ public class EmpleadorView extends VerticalLayout implements View {
 
     private void setElemento(Item elemento) {
         fieldGroup.setItemDataSource(elemento);
+    }
+
+    private void crearBusquedaFicticia(Empleador empleador) {
+        Busqueda busquedaFicticia = new Busqueda();
+        busquedaFicticia.setEmpleador(empleador);
+        busquedaFicticia.setFicticia(true);
+        busquedaFicticia.setActiva(true);
+        HbnContainer<Busqueda> hbnBusqueda = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        hbnBusqueda.saveEntity(busquedaFicticia);
     }
 }

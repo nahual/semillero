@@ -6,21 +6,23 @@ import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.converter.Converter;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
-import org.nahual.semillero.converters.EmpleadorToIdConverter;
+import org.nahual.semillero.converters.SemilleroConverterFactory;
 import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
+import org.nahual.utils.StsHbnContainer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -42,6 +44,8 @@ public class PostulacionView extends VerticalLayout implements View {
     private Window window;
 
     public PostulacionView(Item item) {
+        VaadinSession.getCurrent().setConverterFactory(new SemilleroConverterFactory());
+
         this.hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Egresado egresadoPostulacion = ((Postulacion) ((HbnContainer.EntityItem) (item)).getPojo()).getEgresado();
         init(egresadoPostulacion);
@@ -109,6 +113,8 @@ public class PostulacionView extends VerticalLayout implements View {
         empleador.setRequired(true);
         empleador.setRequiredError("El empleador es un dato obligatorio");
         empleador.setImmediate(true);
+        Converter converterEmpleador = VaadinSession.getCurrent().getConverterFactory().createConverter(Empleador.class, Long.class);
+        empleador.setConverter(converterEmpleador);
 
         this.cargarEmpleadores();
         Property.ValueChangeListener listener = new Property.ValueChangeListener() {
@@ -128,6 +134,8 @@ public class PostulacionView extends VerticalLayout implements View {
 
         busqueda = new ComboBox("Búsqueda");
         busqueda.setImmediate(true);
+        busqueda.setNullSelectionAllowed(false);
+
         // Por defecto cargo todas las búsquedas activas
         this.cargarBusquedas(null);
 
@@ -145,6 +153,8 @@ public class PostulacionView extends VerticalLayout implements View {
 
         };
         busqueda.addValueChangeListener(listenerBusquedas);
+        Converter converterBusqueda = VaadinSession.getCurrent().getConverterFactory().createConverter(Busqueda.class, Long.class);
+        busqueda.setConverter(converterBusqueda);
         fl.addComponent(busqueda);
 
         activaCB = new CheckBox("Activa");
@@ -161,7 +171,9 @@ public class PostulacionView extends VerticalLayout implements View {
                     @Override
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
+
                             fieldGroup.commit();
+
                             if (nuevoItem) {
                                 hbn.saveEntity(((BeanItem<Postulacion>) fieldGroup.getItemDataSource()).getBean());
                             }
@@ -190,53 +202,6 @@ public class PostulacionView extends VerticalLayout implements View {
 
     public void setElemento(Item elemento) {
         fieldGroup.setItemDataSource(elemento);
-        if (!nuevoItem) {
-            if (this.busqueda.getValue() == null) {
-                this.refrescarComboEmpleador();
-            } else {
-                this.refrescarComboBusqueda();
-            }
-        }
-    }
-
-    private void refrescarComboEmpleador() {
-        HbnContainer hbnEmpleador = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        Empleador empleadorTmp;
-
-        hbnEmpleador.addContainerFilter(new ContainerFilter("id") {
-            @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, empleador.getValue());
-            }
-        });
-
-        ArrayList ids = (ArrayList) hbnEmpleador.getItemIds();
-
-        // Solo debe haber uno ya que se filtró por id de empleador
-        for (Object id : ids) {
-            empleadorTmp = (Empleador) hbnEmpleador.getItem(id).getPojo();
-            this.empleador.select(empleadorTmp);
-        }
-    }
-
-    private void refrescarComboBusqueda() {
-        HbnContainer hbnBusqueda = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        Busqueda busquedaTmp;
-
-        hbnBusqueda.addContainerFilter(new ContainerFilter("id") {
-            @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, busqueda.getValue());
-            }
-        });
-
-        ArrayList ids = (ArrayList) hbnBusqueda.getItemIds();
-        // Solo debe haber uno ya que se filtró por id de búsqueda
-        for (Object id : ids) {
-            busquedaTmp = (Busqueda) hbnBusqueda.getItem(id).getPojo();
-            this.busqueda.select(busquedaTmp);
-        }
-
     }
 
     public Window getWindow() {
@@ -275,13 +240,19 @@ public class PostulacionView extends VerticalLayout implements View {
                 }
             });
         }
-        // o bien, todas las activas si no se dió un empleador en particular
+        // o bien, todas las activas (evitando ficticias) si no se dió un empleador en particular
         else {
             hbn.removeAllContainerFilters();
             hbn.addContainerFilter(new ContainerFilter("activa") {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+                }
+            });
+            hbn.addContainerFilter(new ContainerFilter("ficticia") {
+                @Override
+                public Criterion getFieldCriterion(String fullPropertyName) {
+                    return Restrictions.eq(fullPropertyName, Boolean.FALSE);
                 }
             });
         }

@@ -27,8 +27,11 @@ public class Busqueda {
     @Column(name = "FECHA_FIN")
     private Date fechaFin;
 
-    @Column(name = "ACTIVA", columnDefinition = "SMALLINT DEFAULT 1")
+    @Column(name = "ACTIVA")
     private boolean activa;
+
+    @Column(name = "FICTICIA")
+    private boolean ficticia = false;
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
@@ -81,9 +84,46 @@ public class Busqueda {
         this.descripcion = descripcion;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public boolean isFicticia() {
+        return ficticia;
+    }
+
+    public void setFicticia(boolean ficticia) {
+        this.ficticia = ficticia;
+    }
+
     @Override
     public String toString() {
-        return titulo + " - " + empleador;
+        if (!ficticia){
+            return titulo + " - " + empleador;
+        }
+
+        return "";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Busqueda busqueda = (Busqueda) o;
+
+        if (id != null ? !id.equals(busqueda.id) : busqueda.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
 

@@ -169,39 +169,6 @@ public class PostulacionesView extends VerticalLayout implements View {
 
         layout.addComponent(activaCB);
 
-        // Botones de acciones
-        table.addGeneratedColumn("Acciones", new Table.ColumnGenerator() {
-            @Override
-            public Object generateCell(final Table source, final Object itemId, Object columnId) {
-                HorizontalLayout cell = new HorizontalLayout();
-
-                Button eliminarButton = new Button("Eliminar");
-
-                eliminarButton.addClickListener(new Button.ClickListener() {
-
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-
-                        TransactionTemplate transactionTemplate = SpringHelper.getBean("transactionTemplate", TransactionTemplate.class);
-                        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                            @Override
-                            protected void doInTransactionWithoutResult(TransactionStatus status) {
-                                Postulacion postulacionEliminar = hbn.getItem(itemId).getPojo();
-                                postulacionEliminar.setActiva(false);
-                                hbn.updateEntity(postulacionEliminar);
-
-                            }
-                        });
-                    }
-                });
-                eliminarButton.setStyleName("iconButton");
-                eliminarButton.setIcon(new ThemeResource("img/eliminar.png"), "Eliminar postulación");
-                cell.addComponent(eliminarButton);
-
-                return cell;
-            }
-        });
-
         layout.addComponent(table);
 
         // Edición de postulaciones
