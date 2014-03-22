@@ -26,6 +26,9 @@ public class Postulacion {
     @Column(name = "ACTIVA")
     private Boolean activa;
 
+    @Column(name = "EXITOSA")
+    private Boolean exitosa;
+
     @Column(name = "DESCRIPCION")
     private String descripcion;
 
@@ -77,5 +80,12 @@ public class Postulacion {
     public void setActiva(Boolean activa) {
         this.activa = activa;
     }
-    
+
+    public Boolean getExitosa() {
+        return exitosa;
+    }
+
+    public void setExitosa(Boolean exitosa) {
+        this.exitosa = exitosa;
+    }
 }
