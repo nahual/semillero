@@ -6,6 +6,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
@@ -107,8 +108,8 @@ public class EgresadosView extends VerticalLayout implements View {
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
                 HorizontalLayout cell = new HorizontalLayout();
 
-                Button eliminarButton = new Button("Eliminar");
-
+                Button eliminarButton = new Button();
+                eliminarButton.setDescription("Eliminar egresado");
                 eliminarButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -126,10 +127,12 @@ public class EgresadosView extends VerticalLayout implements View {
                         });
                     }
                 });
+                eliminarButton.setStyleName("iconButton");
+                eliminarButton.setIcon(new ThemeResource("img/eliminar.png"), "Eliminar egresado");
                 cell.addComponent(eliminarButton);
 
-                Button nuevaPostulacionButton = new Button("Nueva postulación");
-
+                Button nuevaPostulacionButton = new Button();
+                nuevaPostulacionButton.setDescription("Nueva postulacion");
                 nuevaPostulacionButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -146,10 +149,12 @@ public class EgresadosView extends VerticalLayout implements View {
                         window.setContent(postulacionView);
                     }
                 });
+                nuevaPostulacionButton.setStyleName("iconButton");
+                nuevaPostulacionButton.setIcon(new ThemeResource("img/nueva_postulacion.png"), "Nueva postulación");
                 cell.addComponent(nuevaPostulacionButton);
 
-                Button postulacionesActivas = new Button("Postulaciones activas");
-
+                Button postulacionesActivas = new Button();
+                postulacionesActivas.setDescription("Postulaciones activas");
                 postulacionesActivas.addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
@@ -160,7 +165,8 @@ public class EgresadosView extends VerticalLayout implements View {
                 });
 
                 cell.addComponent(postulacionesActivas);
-
+                postulacionesActivas.setStyleName("iconButton");
+                postulacionesActivas.setIcon(new ThemeResource("img/postulacion.png"), "Postulaciones activas");
                 return cell;
             }
         });
