@@ -144,7 +144,7 @@ public class EgresadosView extends VerticalLayout implements View {
                         getUI().addWindow(window);
                         window.setModal(true);
                         window.setHeight("500px");
-                        window.setWidth("350px");
+                        window.setWidth("550px");
                         postulacionView.setWindow(window);
                         window.setContent(postulacionView);
                     }

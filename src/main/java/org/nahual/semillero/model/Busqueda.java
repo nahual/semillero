@@ -1,6 +1,7 @@
 package org.nahual.semillero.model;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "BUSQUEDA")
-public class Busqueda {
+public class Busqueda implements Comparable<Busqueda>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -103,7 +104,8 @@ public class Busqueda {
     @Override
     public String toString() {
         if (!ficticia){
-            return titulo + " - " + empleador;
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            return titulo + " - " + empleador + " - " + formatter.format(fechaInicio);
         }
 
         return "";
@@ -124,6 +126,20 @@ public class Busqueda {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    @Override
+    public int compareTo(Busqueda otraBusqueda) {
+        // Si es ficticia
+        if (this.fechaInicio == null){
+            return 1;
+        }
+
+        if (otraBusqueda.fechaInicio == null){
+            return -1;
+        }
+
+        return this.fechaInicio.compareTo(otraBusqueda.fechaInicio);
     }
 }
 

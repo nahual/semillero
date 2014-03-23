@@ -28,6 +28,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class PostulacionView extends VerticalLayout implements View {
@@ -252,9 +253,16 @@ public class PostulacionView extends VerticalLayout implements View {
         }
 
         ArrayList ids = (ArrayList) hbn.getItemIds();
+        ArrayList<Busqueda> busquedas = new ArrayList<Busqueda>();
         for (Object id : ids) {
             busquedaTmp = (Busqueda) hbn.getItem(id).getPojo();
-            busqueda.addItem(busquedaTmp);
+            busquedas.add(busquedaTmp);
+        }
+
+        // Colocar en el combo las fechas en orden descendente
+        Collections.sort(busquedas, Collections.reverseOrder());
+        for (Busqueda otraBusqueda : busquedas){
+            busqueda.addItem(otraBusqueda);
         }
 
     }

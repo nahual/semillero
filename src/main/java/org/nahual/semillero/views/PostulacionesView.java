@@ -178,8 +178,8 @@ public class PostulacionesView extends VerticalLayout implements View {
                 Window window = new Window();
                 getUI().addWindow(window);
                 window.setModal(true);
-                window.setHeight("600px");
-                window.setWidth("500px");
+                window.setHeight("500px");
+                window.setWidth("550px");
                 PostulacionView postulacionView = new PostulacionView(event.getItem());
                 postulacionView.setWindow(window);
                 window.setContent(postulacionView);
