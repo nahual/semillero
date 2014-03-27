@@ -2,6 +2,7 @@ package org.nahual.semillero.model;
 
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "POSTULACIONES")
@@ -31,6 +32,12 @@ public class Postulacion {
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable
+            (name = "FEEDBACK_POSTULACION", joinColumns = {@JoinColumn(name = "POSTULACION_ID", referencedColumnName = "id")}
+                    , inverseJoinColumns = {@JoinColumn(name = "FEEDBACK_ID", referencedColumnName = "id")})
+    private Set<Feedback> feedbacks;
 
 
     public Long getId() {
@@ -87,5 +94,13 @@ public class Postulacion {
 
     public void setExitosa(Boolean exitosa) {
         this.exitosa = exitosa;
+    }
+
+    public Set<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Set<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 }
