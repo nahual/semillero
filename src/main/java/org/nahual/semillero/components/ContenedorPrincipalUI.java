@@ -1,6 +1,8 @@
 package org.nahual.semillero.components;
 
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.ClassResource;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.nahual.semillero.model.Postulacion;
 import org.nahual.semillero.views.*;
@@ -21,6 +23,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
     private ComponentContainer body;
     private BusquedasView busquedasEmpleadorView;
     private PostulacionesView postulacionesView;
+    private HorizontalLayout logo;
 
     public ContenedorPrincipalUI() {
         buildMainLayout();
@@ -31,9 +34,18 @@ public class ContenedorPrincipalUI extends CustomComponent {
     private void buildMainLayout() {
         mainLayout = new VerticalLayout();
         mainLayout.setMargin(true);
+        logo = new HorizontalLayout();
+        ThemeResource resource = new ThemeResource("img/logo.png");
+        Image image = new Image("", resource);
+        logo.addComponent(image);
+        Label tituloEmpleadores = new Label("Semillero");
+        tituloEmpleadores.setStyleName("tituloLogo");
+        logo.addComponent(tituloEmpleadores);
+        logo.setComponentAlignment(tituloEmpleadores, Alignment.BOTTOM_CENTER);
         body = new VerticalLayout();
         body.setSizeFull();
         body.setHeight("100%");
+        mainLayout.addComponent(logo);
         mainLayout.addComponent(barraDeMenu);
         mainLayout.addComponent(body);
         mainLayout.setComponentAlignment(body, Alignment.TOP_LEFT);
