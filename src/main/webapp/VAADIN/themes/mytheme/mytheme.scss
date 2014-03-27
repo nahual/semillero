@@ -38,6 +38,7 @@
     display: block;
   }
 
+
   .v-button-iconButton .v-button-wrap,
   .v-disabled.v-button-iconButton .v-button-wrap,
   .v-button-iconButton:focus, .v-button-iconButton:active,
@@ -57,6 +58,13 @@
     box-shadow: lightgray;
     background-image: none;
     background: none;
+  }
+  .v-button {
+    cursor: pointer;
+  }
+
+  .v-menubar-menuitem-indicator {
+    cursor: pointer;
   }
 
   .wordwrap-table .v-table-cell-wrapper {
