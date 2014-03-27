@@ -239,7 +239,7 @@ public class PostulacionView extends VerticalLayout implements View {
         HbnContainer hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Busqueda busquedaTmp;
 
-        // Solamente cargar las búsquedas del empleador dado
+        // Solamente cargar las búsquedas activas del empleador dado
         if (empleador != null) {
             hbn.removeAllContainerFilters();
             hbn.addContainerFilter(new ContainerFilter("empleador") {
@@ -248,8 +248,14 @@ public class PostulacionView extends VerticalLayout implements View {
                     return Restrictions.eq(fullPropertyName, empleador);
                 }
             });
+            hbn.addContainerFilter(new ContainerFilter("activa") {
+                @Override
+                public Criterion getFieldCriterion(String fullPropertyName) {
+                    return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+                }
+            });
         }
-        // o bien, todas (evitando ficticias) si no se dió un empleador en particular
+        // o bien, todas las activas (evitando ficticias) si no se dió un empleador en particular
         else {
             hbn.removeAllContainerFilters();
             hbn.addContainerFilter(new ContainerFilter("ficticia") {
@@ -258,6 +264,13 @@ public class PostulacionView extends VerticalLayout implements View {
                     return Restrictions.eq(fullPropertyName, Boolean.FALSE);
                 }
             });
+            hbn.addContainerFilter(new ContainerFilter("activa") {
+                @Override
+                public Criterion getFieldCriterion(String fullPropertyName) {
+                    return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+                }
+            });
+
         }
 
         ArrayList ids = (ArrayList) hbn.getItemIds();
