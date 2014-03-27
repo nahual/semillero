@@ -104,39 +104,10 @@ public class EmpleadoresView extends VerticalLayout implements View {
                 window.setModal(true);
                 window.setHeight("500px");
                 window.setWidth("350px");
+                window.setWidth("350px");
                 EmpleadorView empleadorView = new EmpleadorView(event.getItem());
                 empleadorView.setWindow(window);
                 window.setContent(empleadorView);
-            }
-        });
-
-        table.addGeneratedColumn("Observaciones", new Table.ColumnGenerator() {
-
-            @Override
-            public Object generateCell(final Table source, final Object itemId, Object columnId) {
-                HorizontalLayout cell = new HorizontalLayout();
-
-                Button verObservacionesButton = new Button("Ver Observaciones");
-
-                verObservacionesButton.addClickListener(new Button.ClickListener() {
-
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        Empleador empleador = hbn.getItem(itemId).getPojo();
-                        ObservacionesView observacionesView = new ObservacionesView(empleador);
-
-                        Window window = new Window();
-                        getUI().addWindow(window);
-                        window.setModal(true);
-                        window.setHeight("300px");
-                        window.setWidth("500px");
-                        observacionesView.setWindow(window);
-                        window.setContent(observacionesView);
-                    }
-                });
-                cell.addComponent(verObservacionesButton);
-
-                return cell;
             }
         });
 
@@ -228,10 +199,31 @@ public class EmpleadoresView extends VerticalLayout implements View {
                 nuevaObservacionButton.setIcon(new ThemeResource("img/agregar_observacion.png"), "Agregar observación");
                 cell.addComponent(nuevaObservacionButton);
 
-                return cell;
-            }
-        });
+                Button verObservacionesButton = new Button("");
+                verObservacionesButton.setDescription("Ver observaciones");
+                verObservacionesButton.addClickListener(new Button.ClickListener() {
 
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Empleador empleador = hbn.getItem(itemId).getPojo();
+                        ObservacionesView observacionesView = new ObservacionesView(empleador);
+
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("300px");
+                        window.setWidth("500px");
+                        observacionesView.setWindow(window);
+                        window.setContent(observacionesView);
+                    }
+                });
+                verObservacionesButton.setStyleName("iconButton");
+                verObservacionesButton.setIcon(new ThemeResource("img/observaciones.png"), "Ver observaciones");
+                cell.addComponent(verObservacionesButton);
+
+                return cell;
+            };
+        });
         layout.addComponent(table);
 
         layout.setMargin(true);
