@@ -50,13 +50,14 @@ public class PostulacionView extends VerticalLayout implements View {
         VaadinSession.getCurrent().setConverterFactory(new SemilleroConverterFactory());
 
         Egresado egresadoPostulacion = ((Postulacion) ((StsHbnContainer.EntityItem) (item)).getPojo()).getEgresado();
+        this.title = "Editar Postulacion";
         init(egresadoPostulacion);
         this.nuevoItem = false;
-        this.title = "Editar Postulacion";
         setElemento(item);
     }
 
     public PostulacionView(Egresado unEgresado) {
+        this.title = "Nueva Postulacion";
         init(unEgresado);
         this.hbn = new StsHbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Postulacion postulacion = new Postulacion();
@@ -64,7 +65,6 @@ public class PostulacionView extends VerticalLayout implements View {
         postulacion.setActiva(true);
         Item newItem = new BeanItem<Postulacion>(postulacion);
         this.nuevoItem = true;
-        this.title = "Nueva Postulacion";
         setElemento(newItem);
     }
 
@@ -255,12 +255,6 @@ public class PostulacionView extends VerticalLayout implements View {
         // o bien, todas las activas (evitando ficticias) si no se dió un empleador en particular
         else {
             hbn.removeAllContainerFilters();
-            hbn.addContainerFilter(new ContainerFilter("ficticia") {
-                @Override
-                public Criterion getFieldCriterion(String fullPropertyName) {
-                    return Restrictions.eq(fullPropertyName, Boolean.FALSE);
-                }
-            });
             hbn.addContainerFilter(new ContainerFilter("activa") {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {

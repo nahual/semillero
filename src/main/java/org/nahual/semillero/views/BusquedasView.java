@@ -34,7 +34,6 @@ import java.util.Locale;
 public class BusquedasView extends VerticalLayout implements View {
 
     private static final String CONTAINER_FILTER_ACTIVA = "activa";
-    private static final String CONTAINER_FILTER_FICTICIA = "ficticia";
     private static final String CONTAINER_FILTER_EMPLEADOR = "empleador";
     private static final Object CONTAINER_FILTER_FECHA_INICIO = "fecha_inicio";
 
@@ -99,13 +98,6 @@ public class BusquedasView extends VerticalLayout implements View {
             protected Criteria customizeCriteria(Criteria criteria) {
                 return criteria.createAlias("empleador", "empleador")
                         .add(Restrictions.eq("empleador.activo", Boolean.TRUE));
-            }
-        });
-        // Se filtran las ficticias ya que no son búsquedas reales y/o de interes para el usuario
-        hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_FICTICIA) {
-            @Override
-            public Criterion getFieldCriterion(String fullPropertyName) {
-                return Restrictions.eq(fullPropertyName, Boolean.FALSE);
             }
         });
 

@@ -44,6 +44,7 @@ public class BusquedaView extends VerticalLayout implements View {
         this.nuevoItem = true;
         Busqueda busqueda = new Busqueda();
         busqueda.setEmpleador(unEmpleador);
+        busqueda.setActiva(true);
         Item newItem = new BeanItem<Busqueda>(busqueda);
         setElemento(newItem);
     }
@@ -117,7 +118,7 @@ public class BusquedaView extends VerticalLayout implements View {
         fechaFinDF.setRequiredError("Fecha Fin no puede estar vacio");
 
         activaCB = new CheckBox("Activa");
-        activaCB.setValue(false);
+        activaCB.setValue(true);
         fl.addComponent(activaCB);
 
         descripcionTA = new TextArea("Descripción");

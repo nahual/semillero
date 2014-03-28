@@ -9,7 +9,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "BUSQUEDA")
-public class Busqueda implements Comparable<Busqueda>{
+public class Busqueda implements Comparable<Busqueda> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,9 +30,6 @@ public class Busqueda implements Comparable<Busqueda>{
 
     @Column(name = "ACTIVA", columnDefinition = "SMALLINT DEFAULT 1")
     private boolean activa;
-
-    @Column(name = "FICTICIA")
-    private boolean ficticia = false;
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
@@ -93,22 +90,10 @@ public class Busqueda implements Comparable<Busqueda>{
         this.id = id;
     }
 
-    public boolean isFicticia() {
-        return ficticia;
-    }
-
-    public void setFicticia(boolean ficticia) {
-        this.ficticia = ficticia;
-    }
-
     @Override
     public String toString() {
-        if (!ficticia){
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            return titulo + " - " + empleador + " - " + formatter.format(fechaInicio);
-        }
-
-        return "";
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        return titulo + " - " + empleador + " - " + formatter.format(fechaInicio);
     }
 
     @Override
@@ -130,15 +115,6 @@ public class Busqueda implements Comparable<Busqueda>{
 
     @Override
     public int compareTo(Busqueda otraBusqueda) {
-        // Si es ficticia
-        if (this.fechaInicio == null){
-            return 1;
-        }
-
-        if (otraBusqueda.fechaInicio == null){
-            return -1;
-        }
-
         return this.fechaInicio.compareTo(otraBusqueda.fechaInicio);
     }
 }

@@ -121,8 +121,6 @@ public class EmpleadorView extends VerticalLayout implements View {
                             if (nuevoItem) {
                                 Empleador empleador = ((BeanItem<Empleador>) fieldGroup.getItemDataSource()).getBean();
                                 hbn.saveEntity(empleador);
-                                // Para cada empleador debe haber una (y solo una) búsqueda ficticia
-                                crearBusquedaFicticia(empleador);
                             }
                             if (window != null)
                                 window.close();
@@ -144,12 +142,4 @@ public class EmpleadorView extends VerticalLayout implements View {
         fieldGroup.setItemDataSource(elemento);
     }
 
-    private void crearBusquedaFicticia(Empleador empleador) {
-        Busqueda busquedaFicticia = new Busqueda();
-        busquedaFicticia.setEmpleador(empleador);
-        busquedaFicticia.setFicticia(true);
-        busquedaFicticia.setActiva(true);
-        HbnContainer<Busqueda> hbnBusqueda = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        hbnBusqueda.saveEntity(busquedaFicticia);
-    }
 }
