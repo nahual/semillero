@@ -2,6 +2,7 @@ package org.nahual.semillero.ui;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.Page;
@@ -55,23 +56,45 @@ public class SemilleroAppUI extends UI {
 
         usuarioTF = new TextField("Usuario");
         usuarioTF.setRequired(true);
+        usuarioTF.addShortcutListener(new AbstractField.FocusShortcut(password, ShortcutAction.KeyCode.ENTER, null) {
+            @Override
+            public void handleAction(Object sender, Object target) {
+                checkPass();
+            }
+        });
         fl.addComponent(usuarioTF);
 
         password = new PasswordField("Contraseña");
         password.setRequired(true);
+        password.addShortcutListener(new AbstractField.FocusShortcut(password, ShortcutAction.KeyCode.ENTER, null) {
+            @Override
+            public void handleAction(Object sender, Object target) {
+                 checkPass();
+            }
+        });
         fl.addComponent(password);
 
         Button button = new Button("Ingresar");
         fl.addComponent(button);
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
-                if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
-                    showSemillero();
-                } else {
-                    new Notification("El usuario y contraseña no son válidos", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
-                }
+                checkPass();
+                //if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
+                //    showSemillero();
+                //} else {
+                //    new Notification("El usuario y contraseña no son válidos", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+                //}
             }
         });
+
+    }
+
+    protected void checkPass(){
+        if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
+            showSemillero();
+        } else {
+            new Notification("El usuario y contraseña no son válidos", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+        }
     }
 
     public Navigator getNavigator() {
