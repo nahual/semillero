@@ -7,6 +7,7 @@ import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.converter.StringToDateConverter;
+import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.*;
@@ -197,6 +198,19 @@ public class BusquedasView extends VerticalLayout implements View {
         layout.setMargin(true);
         topLayout.setMargin(true);
 
+        table.addItemClickListener(new ItemClickEvent.ItemClickListener() {
+            @Override
+            public void itemClick(ItemClickEvent event) {
+                Window window = new Window();
+                getUI().addWindow(window);
+                window.setModal(true);
+                window.setHeight("500px");
+                window.setWidth("550px");
+                BusquedaView postulacionView = new BusquedaView(event.getItem());
+                postulacionView.setWindow(window);
+                window.setContent(postulacionView);
+            }
+        });
         this.addComponent(layout);
     }
 

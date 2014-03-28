@@ -44,12 +44,15 @@ public class PostulacionView extends VerticalLayout implements View {
     private FieldGroup fieldGroup;
     private Window window;
 
+    private String title;
+
     public PostulacionView(Item item) {
         VaadinSession.getCurrent().setConverterFactory(new SemilleroConverterFactory());
 
         Egresado egresadoPostulacion = ((Postulacion) ((StsHbnContainer.EntityItem) (item)).getPojo()).getEgresado();
         init(egresadoPostulacion);
         this.nuevoItem = false;
+        this.title = "Editar Postulacion";
         setElemento(item);
     }
 
@@ -61,6 +64,7 @@ public class PostulacionView extends VerticalLayout implements View {
         postulacion.setActiva(true);
         Item newItem = new BeanItem<Postulacion>(postulacion);
         this.nuevoItem = true;
+        this.title = "Nueva Postulacion";
         setElemento(newItem);
     }
 
@@ -93,7 +97,7 @@ public class PostulacionView extends VerticalLayout implements View {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloPostulacion = new Label("Nueva Postulación");
+        Label tituloPostulacion = new Label(this.title);
         tituloPostulacion.setStyleName("titulo");
 
         layout.addComponent(tituloPostulacion);
