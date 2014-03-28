@@ -76,7 +76,6 @@ public class ContenedorPrincipalUI extends CustomComponent {
         navigator.addView(VIEW_BUSQUEDAS_EMPLEADOR, busquedasEmpleadorView);
         navigator.addView(VIEW_POSTULACIONES, postulacionesView);
         navigator.setErrorView(errorView);
-
         barraDeMenu.addItem("Empleadores", null, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem menuItem) {
@@ -101,6 +100,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
                 navigator.navigateTo(VIEW_POSTULACIONES);
             }
         });
+        barraDeMenu.setStyleName("barraMenu");
     }
 
     public ComponentContainer getBody() {

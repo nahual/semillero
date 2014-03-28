@@ -211,6 +211,14 @@ public class PostulacionView extends VerticalLayout implements View {
         HbnContainer<Empleador> hbnEmpleador = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Empleador empleadorTmp;
 
+        hbnEmpleador.removeAllContainerFilters();
+        hbnEmpleador.addContainerFilter(new ContainerFilter("activo") {
+            @Override
+            public Criterion getFieldCriterion(String fullPropertyName) {
+                return Restrictions.eq(fullPropertyName, Boolean.TRUE);
+            }
+        });
+
         ArrayList ids = (ArrayList) hbnEmpleador.getItemIds();
         for (Object id : ids) {
             empleadorTmp = hbnEmpleador.getItem(id).getPojo();
