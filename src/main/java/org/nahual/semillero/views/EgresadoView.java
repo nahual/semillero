@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class EgresadoView extends VerticalLayout implements View {
 
+    private final String title;
     private HbnContainer<Egresado> hbn;
     private boolean nuevoItem;
     private TextField nombreTF;
@@ -41,6 +42,7 @@ public class EgresadoView extends VerticalLayout implements View {
 
     public EgresadoView(HbnContainer<Egresado> hbn) {
         this.hbn = hbn;
+        this.title = "Nuevo Egresado";
         init();
         Egresado egresado = new Egresado();
         egresado.setActivo(true);
@@ -54,6 +56,7 @@ public class EgresadoView extends VerticalLayout implements View {
     }
 
     public EgresadoView(Item item) {
+        this.title = "Editar Egresado";
         init();
         this.nuevoItem = false;
         setElemento(item);
@@ -89,7 +92,7 @@ public class EgresadoView extends VerticalLayout implements View {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloEgresado = new Label("Nuevo Egresado");
+        Label tituloEgresado = new Label(this.title);
         tituloEgresado.setStyleName("titulo");
 
         layout.addComponent(tituloEgresado);

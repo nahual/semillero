@@ -3,7 +3,6 @@ package org.nahual.semillero.views;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.hbnutil.ContainerFilter;
-import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -17,6 +16,8 @@ import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
+import org.nahual.utils.StsContainerFilter;
+import org.nahual.utils.StsHbnContainer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -28,7 +29,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     private static final String CONTAINER_FILTER_ACTIVA = "activa";
     private static final String CONTAINER_FILTER_EGRESADO = "egresado";
 
-    private HbnContainer<Postulacion> hbn;
+    private StsHbnContainer<Postulacion> hbn;
     private Egresado egresado;
     private CheckBox activaCB;
     private ComboBox egresadoCB;
@@ -44,7 +45,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void init() {
-        hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
+        hbn = new StsHbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
 
         this.removeAllComponents();
         final VerticalLayout layout = new VerticalLayout();
@@ -155,6 +156,64 @@ public class PostulacionesView extends VerticalLayout implements View {
             }
         });
 
+        table.addGeneratedColumn("Acciones", new Table.ColumnGenerator() {
+
+            @Override
+            public Object generateCell(final Table source, final Object itemId, Object columnId) {
+                HorizontalLayout cell = new HorizontalLayout();
+
+                Button nuevaObservacionButton = new Button("");
+                nuevaObservacionButton.setDescription("Agregar feedback");
+                nuevaObservacionButton.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+
+                        Postulacion postulacion = hbn.getItem(itemId).getPojo();
+                        FeedbackView feedbackView = new FeedbackView(postulacion);
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("500px");
+                        window.setWidth("350px");
+                        feedbackView.setWindow(window);
+                        window.setContent(feedbackView);
+
+
+
+                    }
+                });
+                nuevaObservacionButton.setStyleName("iconButton");
+                nuevaObservacionButton.setIcon(new ThemeResource("img/agregar_observacion.png"), "Agregar feedback");
+                cell.addComponent(nuevaObservacionButton);
+
+                Button verFeedbacksButton = new Button("Ver Feedbacks");
+
+                verFeedbacksButton.addClickListener(new Button.ClickListener() {
+
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        Postulacion postulacion = hbn.getItem(itemId).getPojo();
+                        FeedbacksView feedbacksView = new FeedbacksView(postulacion);
+
+                        Window window = new Window();
+                        getUI().addWindow(window);
+                        window.setModal(true);
+                        window.setHeight("300px");
+                        window.setWidth("500px");
+                        feedbacksView.setWindow(window);
+                        window.setContent(feedbacksView);
+                    }
+                });
+
+                verFeedbacksButton.setStyleName("iconButton");
+                verFeedbacksButton.setIcon(new ThemeResource("img/observaciones.png"), "Ver feedbacks");
+                cell.addComponent(verFeedbacksButton);
+
+                return cell;
+            }
+        });
+
         activaCB = new CheckBox("Mostrar solo postulaciones activas");
         activaCB.addStyleName("margins");
         activaCB.addValueChangeListener(new Property.ValueChangeListener() {
@@ -195,7 +254,7 @@ public class PostulacionesView extends VerticalLayout implements View {
 
     private void cambiarFiltroPostulacionActiva() {
         if (activaCB.getValue())
-            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
+            hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_ACTIVA) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, activaCB.getValue());
@@ -206,7 +265,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void cargarEgresados() {
-        HbnContainer<Egresado> hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        StsHbnContainer<Egresado> hbn = new StsHbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
 
         ArrayList ids = (ArrayList) hbn.getItemIds();
         for (Object id : ids) {
@@ -219,7 +278,7 @@ public class PostulacionesView extends VerticalLayout implements View {
 
     private void cambiarEgresado() {
         if (egresado != null)
-            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EGRESADO) {
+            hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_EGRESADO) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, egresado);

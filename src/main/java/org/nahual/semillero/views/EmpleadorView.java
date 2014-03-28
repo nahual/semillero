@@ -21,12 +21,14 @@ import java.util.Collection;
 
 public class EmpleadorView extends VerticalLayout implements View {
     private boolean nuevoItem;
+    private String title;
     private HbnContainer<Empleador> hbn;
     private TextField empresaTF;
     private TextField contactoTF;
     private FieldGroup fieldGroup;
 
     public EmpleadorView(HbnContainer<Empleador> hbn) {
+        this.title = "Nuevo Empleador";
         init();
         this.hbn = hbn;
         Empleador empleador = new Empleador();
@@ -67,6 +69,7 @@ public class EmpleadorView extends VerticalLayout implements View {
     }
 
     public EmpleadorView(Item item) {
+        this.title = "Editar Empleador";
         init();
         this.nuevoItem = false;
         setElemento(item);
@@ -82,7 +85,7 @@ public class EmpleadorView extends VerticalLayout implements View {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloEmpleador = new Label("Nuevo Empleador");
+        Label tituloEmpleador = new Label(this.title);
         tituloEmpleador.setStyleName("titulo");
 
         layout.addComponent(tituloEmpleador);

@@ -6,12 +6,17 @@ import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
+import org.nahual.semillero.converters.SemilleroConverterFactory;
 import org.nahual.semillero.model.Busqueda;
+import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
+import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
+import org.nahual.utils.StsHbnContainer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -19,7 +24,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.Collection;
 
 public class BusquedaView extends VerticalLayout implements View {
-    private HbnContainer<Busqueda> hbn;
+    private String title;
+    private boolean nuevoItem;
+    private StsHbnContainer<Busqueda> hbn;
     private TextArea descripcionTA;
     private TextField tituloTF;
     private DateField fechaInicioDF;
@@ -28,6 +35,28 @@ public class BusquedaView extends VerticalLayout implements View {
     private CheckBox activaCB;
     private FieldGroup fieldGroup;
     private Window window;
+
+    public BusquedaView(Empleador unEmpleador) {
+        this.title = "Nueva Busqueda";
+        init(unEmpleador);
+
+        this.hbn = new StsHbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        this.nuevoItem = true;
+        Busqueda busqueda = new Busqueda();
+        busqueda.setEmpleador(unEmpleador);
+        Item newItem = new BeanItem<Busqueda>(busqueda);
+        setElemento(newItem);
+    }
+
+    public BusquedaView(Item item) {
+        VaadinSession.getCurrent().setConverterFactory(new SemilleroConverterFactory());
+
+        Empleador empleador = ((Busqueda) ((StsHbnContainer.EntityItem) (item)).getPojo()).getEmpleador();
+        this.title = "Editar Busqueda";
+        init(empleador);
+        this.nuevoItem = false;
+        setElemento(item);
+    }
 
     private void init(Empleador unEmpleador) {
         this.setSizeFull();
@@ -48,17 +77,6 @@ public class BusquedaView extends VerticalLayout implements View {
         }
     }
 
-    public BusquedaView(Empleador unEmpleador) {
-        init(unEmpleador);
-
-        this.hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-
-        Busqueda busqueda = new Busqueda();
-        busqueda.setEmpleador(unEmpleador);
-        Item newItem = new BeanItem<Busqueda>(busqueda);
-        setElemento(newItem);
-    }
-
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
     }
@@ -67,7 +85,7 @@ public class BusquedaView extends VerticalLayout implements View {
         final VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
 
-        Label tituloEmpleador = new Label("Nueva Busqueda");
+        Label tituloEmpleador = new Label(this.title);
         tituloEmpleador.setStyleName("titulo");
 
         layout.addComponent(tituloEmpleador);
@@ -114,7 +132,8 @@ public class BusquedaView extends VerticalLayout implements View {
                     protected void doInTransactionWithoutResult(TransactionStatus status) {
                         try {
                             fieldGroup.commit();
-                            hbn.saveEntity(((BeanItem<Busqueda>) fieldGroup.getItemDataSource()).getBean());
+                            if (nuevoItem)
+                                hbn.saveEntity(((BeanItem<Busqueda>) fieldGroup.getItemDataSource()).getBean());
                             if (window != null)
                                 window.close();
                         } catch (FieldGroup.CommitException e) {

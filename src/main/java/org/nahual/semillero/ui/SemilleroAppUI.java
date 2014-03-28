@@ -3,10 +3,11 @@ package org.nahual.semillero.ui;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.ErrorMessage;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
 
 import javax.servlet.annotation.WebServlet;
@@ -18,6 +19,11 @@ public class SemilleroAppUI extends UI {
     private Navigator navigator;
     private ContenedorPrincipalUI marco;
 
+    private VerticalLayout loginLayout;
+    private TextField usuarioTF;
+    private PasswordField password;
+    private FormLayout fl;
+
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = SemilleroAppUI.class, widgetset = "org.nahual.AppWidgetSet")
     public static class Servlet extends VaadinServlet {
@@ -25,8 +31,12 @@ public class SemilleroAppUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        getPage().setTitle("Semillero");
+        buildLoginView();
+        setContent(loginLayout);
+    }
 
+    private void showSemillero() {
+        getPage().setTitle("Semillero");
         marco = new ContenedorPrincipalUI();
         setContent(marco);
         setSizeFull();
@@ -34,6 +44,34 @@ public class SemilleroAppUI extends UI {
         marco.setNavigator(navigator);
         marco.setupMenu();
         navigator.navigateTo(ContenedorPrincipalUI.VIEW_EMPLEADORES);
+    }
+
+    private void buildLoginView() {
+        loginLayout = new VerticalLayout();
+        loginLayout.setMargin(true);
+
+        fl = new FormLayout();
+        loginLayout.addComponent(fl);
+
+        usuarioTF = new TextField("Usuario");
+        usuarioTF.setRequired(true);
+        fl.addComponent(usuarioTF);
+
+        password = new PasswordField("Contraseña");
+        password.setRequired(true);
+        fl.addComponent(password);
+
+        Button button = new Button("Ingresar");
+        fl.addComponent(button);
+        button.addClickListener(new Button.ClickListener() {
+            public void buttonClick(Button.ClickEvent event) {
+                if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
+                    showSemillero();
+                } else {
+                    new Notification("El usuario y contraseña no son válidos", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
+                }
+            }
+        });
     }
 
     public Navigator getNavigator() {

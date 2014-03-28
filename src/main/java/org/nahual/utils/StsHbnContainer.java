@@ -328,17 +328,28 @@ public class StsHbnContainer<T> implements Container, Container.Indexed, Contain
 
                                 pojoCollection.removeAll(orphans);
                             } else if (propertyType.isAssociationType()) {
-                                final Class<?> referencedType = classMetadata
-                                        .getPropertyType(propertyName)
-                                        .getReturnedClass();
+                                if (value != null) {
+                                    final Class<?> referencedType = classMetadata
+                                            .getPropertyType(propertyName)
+                                            .getReturnedClass();
 
-                                final Object object = sessionFactory
-                                        .getCurrentSession()
-                                        .get(referencedType, (Serializable) value);
+                                    final Object object = sessionFactory
+                                            .getCurrentSession()
+                                            .get(referencedType, (Serializable) value);
 
-                                classMetadata.setPropertyValue(pojo, propertyName, object);
-                                sessionFactory.getCurrentSession().merge(object);
+                                    classMetadata.setPropertyValue(pojo, propertyName, object);
+                                    sessionFactory.getCurrentSession().merge(object);
+                                } else {
+                                    /**
+                                     * Esto se hace porque se vió el error al momento de editar una entidad
+                                     * cuya tabla que posee una foreign key a otra tabla y dicha key puede ser nula.
+                                     * Esto lanzaba una excepcion en la linea sessionFactory.getCurrentSession().get(referencedType, (Serializable) value);
+                                     * por ser el value null
+                                     * **/
+                                    classMetadata.setPropertyValue(pojo, propertyName, null);
+                                }
                                 sessionFactory.getCurrentSession().saveOrUpdate(pojo);
+
                             } else {
                                 classMetadata.setPropertyValue(pojo, propertyName, value);
                             }
