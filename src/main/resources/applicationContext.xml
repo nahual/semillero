@@ -64,4 +64,9 @@
         <property name="username" value="${jdbc.user}"/>
         <property name="password" value="${jdbc.password}"/>
     </bean>
+
+    <bean id="cvInfo" class="org.nahual.utils.CvUtils">
+        <property name="cvFolder" value="${cv.path}"/>
+        <property name="tmpFolder" value="${cv.tmp}"/>
+    </bean>
 </beans>

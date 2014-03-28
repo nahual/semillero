@@ -6,6 +6,9 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
 import org.hibernate.criterion.Criterion;
@@ -14,10 +17,16 @@ import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.ui.SemilleroAppUI;
+import org.nahual.utils.CvDownloader;
 import org.nahual.utils.SpringHelper;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /** Main view with a menu */
 public class EgresadosView extends VerticalLayout implements View {
@@ -167,6 +176,14 @@ public class EgresadosView extends VerticalLayout implements View {
                 cell.addComponent(postulacionesActivas);
                 postulacionesActivas.setStyleName("iconButton");
                 postulacionesActivas.setIcon(new ThemeResource("img/postulacion.png"), "Postulaciones activas");
+
+                final Button descargarCV = new Button("Descargar CV");
+                postulacionesActivas.setDescription("Descargar CV");
+                Egresado egresado = hbn.getItem(itemId).getPojo();
+                CvDownloader fileDownloader = new CvDownloader(egresado);
+                fileDownloader.extend(descargarCV);
+                cell.addComponent(descargarCV);
+
                 return cell;
             }
         });
@@ -198,4 +215,5 @@ public class EgresadosView extends VerticalLayout implements View {
     public void enter(ViewChangeListener.ViewChangeEvent event) {
 
     }
+
 }
