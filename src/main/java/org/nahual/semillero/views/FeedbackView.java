@@ -83,7 +83,7 @@ public class FeedbackView extends VerticalLayout implements View {
 
 
         TextField postulacion = new TextField("Postulación");
-        postulacion.setValue(unaPostulacion.getDescripcion());
+        postulacion.setValue(unaPostulacion.getEgresado() + " - " + unaPostulacion.getEmpleador());
         postulacion.setReadOnly(true);
         fl.addComponent(postulacion);
 

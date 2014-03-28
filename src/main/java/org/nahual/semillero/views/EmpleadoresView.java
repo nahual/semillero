@@ -27,7 +27,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
         final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("50%");
+        topLayout.setWidth("70%");
 
         Label tituloEmpleadores = new Label("Empleadores");
         tituloEmpleadores.setStyleName("titulo");
@@ -38,6 +38,7 @@ public class EmpleadoresView extends VerticalLayout implements View {
 
         /* Tabla de empleadores */
         final Table table = new Table();
+        table.setWidth("70%");
 
         final HbnContainer<Empleador> hbn = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getSession());
 
