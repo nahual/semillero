@@ -33,7 +33,7 @@ import java.util.Collections;
 
 public class PostulacionView extends VerticalLayout implements View {
 
-    private HbnContainer<Postulacion> hbn;
+    private StsHbnContainer<Postulacion> hbn;
     private boolean nuevoItem;
     private TextField egresadoTF;
     private ComboBox empleador;
@@ -47,8 +47,7 @@ public class PostulacionView extends VerticalLayout implements View {
     public PostulacionView(Item item) {
         VaadinSession.getCurrent().setConverterFactory(new SemilleroConverterFactory());
 
-        this.hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
-        Egresado egresadoPostulacion = ((Postulacion) ((HbnContainer.EntityItem) (item)).getPojo()).getEgresado();
+        Egresado egresadoPostulacion = ((Postulacion) ((StsHbnContainer.EntityItem) (item)).getPojo()).getEgresado();
         init(egresadoPostulacion);
         this.nuevoItem = false;
         setElemento(item);
@@ -56,7 +55,7 @@ public class PostulacionView extends VerticalLayout implements View {
 
     public PostulacionView(Egresado unEgresado) {
         init(unEgresado);
-        this.hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        this.hbn = new StsHbnContainer<Postulacion>(Postulacion.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Postulacion postulacion = new Postulacion();
         postulacion.setEgresado(unEgresado);
         postulacion.setActiva(true);
@@ -122,7 +121,7 @@ public class PostulacionView extends VerticalLayout implements View {
             @Override
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 Busqueda valorBusqueda = (Busqueda) busqueda.getValue();
-                if ((valorBusqueda == null) || (valorBusqueda != null && valorBusqueda.getEmpleador() != empleador.getValue())) {
+                if ((valorBusqueda == null) || (valorBusqueda.getEmpleador() != empleador.getValue())) {
                     if (empleador.getValue() instanceof Empleador || empleador.getValue() == null)
                         cargarBusquedas((Empleador) empleador.getValue());
                 }
@@ -135,10 +134,6 @@ public class PostulacionView extends VerticalLayout implements View {
 
         busqueda = new ComboBox("Búsqueda");
         busqueda.setImmediate(true);
-        busqueda.setNullSelectionAllowed(false);
-
-        // Por defecto cargo todas las búsquedas activas
-        this.cargarBusquedas(null);
 
         // Cuando se selecciona una búsqueda, el campo de empleador se carga automáticamente
         Property.ValueChangeListener listenerBusquedas = new Property.ValueChangeListener() {
@@ -146,9 +141,7 @@ public class PostulacionView extends VerticalLayout implements View {
             public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                 if (busqueda.getValue() instanceof Busqueda) {
                     Busqueda valorBusqueda = (Busqueda) busqueda.getValue();
-                    if (valorBusqueda != null) {
-                        empleador.setValue(valorBusqueda.getEmpleador());
-                    }
+                    empleador.setValue(valorBusqueda.getEmpleador());
                 }
             }
 
@@ -215,12 +208,12 @@ public class PostulacionView extends VerticalLayout implements View {
 
     private void cargarEmpleadores() {
         this.empleador.removeAllItems();
-        HbnContainer hbnEmpleador = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        HbnContainer<Empleador> hbnEmpleador = new HbnContainer<Empleador>(Empleador.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Empleador empleadorTmp;
 
         ArrayList ids = (ArrayList) hbnEmpleador.getItemIds();
         for (Object id : ids) {
-            empleadorTmp = (Empleador) hbnEmpleador.getItem(id).getPojo();
+            empleadorTmp = hbnEmpleador.getItem(id).getPojo();
             empleador.addItem(empleadorTmp);
         }
 
@@ -228,7 +221,7 @@ public class PostulacionView extends VerticalLayout implements View {
 
     private void cargarBusquedas(final Empleador empleador) {
         this.busqueda.removeAllItems();
-        HbnContainer hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        HbnContainer<Busqueda> hbn = new HbnContainer<Busqueda>(Busqueda.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
         Busqueda busquedaTmp;
 
         // Solamente cargar las búsquedas del empleador dado
@@ -255,13 +248,15 @@ public class PostulacionView extends VerticalLayout implements View {
         ArrayList ids = (ArrayList) hbn.getItemIds();
         ArrayList<Busqueda> busquedas = new ArrayList<Busqueda>();
         for (Object id : ids) {
-            busquedaTmp = (Busqueda) hbn.getItem(id).getPojo();
-            busquedas.add(busquedaTmp);
+            if (hbn.getItem(id).getPojo() != null) {
+                busquedaTmp = hbn.getItem(id).getPojo();
+                busquedas.add(busquedaTmp);
+            }
         }
 
         // Colocar en el combo las fechas en orden descendente
         Collections.sort(busquedas, Collections.reverseOrder());
-        for (Busqueda otraBusqueda : busquedas){
+        for (Busqueda otraBusqueda : busquedas) {
             busqueda.addItem(otraBusqueda);
         }
 

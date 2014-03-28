@@ -3,7 +3,6 @@ package org.nahual.semillero.views;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.hbnutil.ContainerFilter;
-import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -17,6 +16,8 @@ import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
+import org.nahual.utils.StsContainerFilter;
+import org.nahual.utils.StsHbnContainer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -28,7 +29,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     private static final String CONTAINER_FILTER_ACTIVA = "activa";
     private static final String CONTAINER_FILTER_EGRESADO = "egresado";
 
-    private HbnContainer<Postulacion> hbn;
+    private StsHbnContainer<Postulacion> hbn;
     private Egresado egresado;
     private CheckBox activaCB;
     private ComboBox egresadoCB;
@@ -44,7 +45,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void init() {
-        hbn = new HbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
+        hbn = new StsHbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
 
         this.removeAllComponents();
         final VerticalLayout layout = new VerticalLayout();
@@ -195,7 +196,7 @@ public class PostulacionesView extends VerticalLayout implements View {
 
     private void cambiarFiltroPostulacionActiva() {
         if (activaCB.getValue())
-            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_ACTIVA) {
+            hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_ACTIVA) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, activaCB.getValue());
@@ -206,7 +207,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void cargarEgresados() {
-        HbnContainer<Egresado> hbn = new HbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        StsHbnContainer<Egresado> hbn = new StsHbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
 
         ArrayList ids = (ArrayList) hbn.getItemIds();
         for (Object id : ids) {
@@ -219,7 +220,7 @@ public class PostulacionesView extends VerticalLayout implements View {
 
     private void cambiarEgresado() {
         if (egresado != null)
-            hbn.addContainerFilter(new ContainerFilter(CONTAINER_FILTER_EGRESADO) {
+            hbn.addContainerFilter(new StsContainerFilter(CONTAINER_FILTER_EGRESADO) {
                 @Override
                 public Criterion getFieldCriterion(String fullPropertyName) {
                     return Restrictions.eq(fullPropertyName, egresado);
