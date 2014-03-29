@@ -68,7 +68,7 @@ public class CvUploader implements Upload.Receiver, Upload.SucceededListener {
             } else {
                 // Si existía un cv anterior, se reemplaza por el nuevo
                 cv = new File(cvUtils.getCvPath(egresado));
-                if (cv.exists())
+                if (cv.exists() && filename != null)
                     cv.delete();
             }
 
