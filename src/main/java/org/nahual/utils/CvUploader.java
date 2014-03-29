@@ -7,28 +7,36 @@ import org.nahual.semillero.model.Egresado;
 
 import java.io.*;
 
-/* TODO: Utilizar directorios guardados en base de datos y no escritos en código */
+/* TODO: Pasar la lógica de directorios por completo a la clase CvUtils o crear una similar exclusiva para eso */
 /* TODO: Verificar funcionamiento en diferentes sistemas operativos. Por la sintaxis de los paths (escapes, etc) */
 public class CvUploader implements Upload.Receiver, Upload.SucceededListener {
-    private String tmpFolder = "/tmp/";
-    private String rootPath = new File("").getAbsolutePath().concat("/cvs");
+    private String cvRootPath;
+    private String tmpPath;
     private File cvTmp;
     private File cv;
     private String filename;
+    private CvUtils cvUtils;
+
+    public CvUploader(){
+        cvUtils = SpringHelper.getBean("cvInfo", CvUtils.class);
+        cvRootPath = cvUtils.getCvRootPath();
+        tmpPath = cvUtils.getTmpPath();
+    }
 
     public OutputStream receiveUpload(String filename,
                                       String mimeType) {
         this.filename = filename;
+
         // upload stream
         FileOutputStream fos = null;
         try {
-            // Verificar si existe rootPath
-            File cvsPath = new File(rootPath);
+            // Verificar si existe cvRootPath
+            File cvsPath = new File(cvRootPath);
             if (!cvsPath.exists()) {
                 cvsPath.mkdir();
             }
             // Verificar si existe la carpeta temporal
-            File tmpDir = new File(rootPath + tmpFolder);
+            File tmpDir = new File(tmpPath);
             if (!tmpDir.exists()) {
                 tmpDir.mkdir();
             }
@@ -37,7 +45,7 @@ public class CvUploader implements Upload.Receiver, Upload.SucceededListener {
                 cvTmp.delete();
             }
 
-            cvTmp = new File(tmpDir.getPath() + "/" + filename);
+            cvTmp = new File(cvUtils.getTmpPath(filename));
             fos = new FileOutputStream(cvTmp);
 
         } catch (final java.io.FileNotFoundException e) {
@@ -50,23 +58,23 @@ public class CvUploader implements Upload.Receiver, Upload.SucceededListener {
         return fos;
     }
 
-
+    /* Se reubica el archivo de la carpeta temporal hacia la ubicación definitiva */
     public void relocateFileFor(Egresado egresado) {
         try {
             // Verifica que exista el directorio del egresado
-            File egresadoDir = new File(rootPath + "/" + egresado.getId().toString());
+            File egresadoDir = new File(cvUtils.getEgresadoFolder(egresado));
             if (!egresadoDir.exists()) {
                 egresadoDir.mkdir();
             } else {
                 // Si existía un cv anterior, se reemplaza por el nuevo
-                cv = new File(rootPath + "/" + egresado.getId().toString() + "/" + egresado.getCv());
+                cv = new File(cvUtils.getCvPath(egresado));
                 if (cv.exists())
                     cv.delete();
             }
 
             if (filename != null) {
-                cvTmp = new File(rootPath + tmpFolder + filename);
-                cv = new File(rootPath + "/" + egresado.getId().toString() + "/" + filename);
+                cvTmp = new File(cvUtils.getTmpPath(filename));
+                cv = new File(cvUtils.getCvPath(egresado, filename));
                 copyFile(cvTmp, cv);
                 egresado.setCv(cv.getName());
             }
@@ -84,6 +92,7 @@ public class CvUploader implements Upload.Receiver, Upload.SucceededListener {
         }
     }
 
+    /* Función auxiliar para copiar un archivo de un lugar a otro: sourceFile -> destFile*/
     private void copyFile(File sourceFile, File destFile)
             throws IOException {
         InputStream inStream = null;

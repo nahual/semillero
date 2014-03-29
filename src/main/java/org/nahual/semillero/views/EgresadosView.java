@@ -7,7 +7,6 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FileDownloader;
-import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
@@ -15,7 +14,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Egresado;
-import org.nahual.semillero.model.Empleador;
 import org.nahual.semillero.ui.SemilleroAppUI;
 import org.nahual.utils.CvDownloader;
 import org.nahual.utils.SpringHelper;
@@ -23,15 +21,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-/** Main view with a menu */
+/**
+ * Main view with a menu
+ */
 public class EgresadosView extends VerticalLayout implements View {
 
-    public EgresadosView(){
+    public EgresadosView() {
         this.setSizeFull();
         this.setMargin(true);
         final VerticalLayout layout = new VerticalLayout();
@@ -109,7 +106,7 @@ public class EgresadosView extends VerticalLayout implements View {
         table.setContainerDataSource(hbn);
         table.addContainerProperty("Id", Long.class, null);
         table.setVisibleColumns(new Object[]{"nombre", "telefonoFijo", "telefonoMovil", "correoElectronico", "nodo",
-                                                "cuatrimestre", "observaciones"});
+                "cuatrimestre", "observaciones"});
 
         table.addGeneratedColumn("Acciones", new Table.ColumnGenerator() {
 
@@ -203,7 +200,6 @@ public class EgresadosView extends VerticalLayout implements View {
                 window.setContent(egresadoView);
             }
         });
-
 
         layout.setMargin(true);
         topLayout.setMargin(true);
