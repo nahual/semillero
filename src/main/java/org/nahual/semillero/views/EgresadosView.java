@@ -179,7 +179,10 @@ public class EgresadosView extends VerticalLayout implements View {
                 Egresado egresado = hbn.getItem(itemId).getPojo();
                 CvDownloader fileDownloader = new CvDownloader(egresado);
                 fileDownloader.extend(descargarCV);
+
                 cell.addComponent(descargarCV);
+                descargarCV.setStyleName("iconButton");
+                descargarCV.setIcon(new ThemeResource("img/descarga.png"), "Descargar CV");
 
                 return cell;
             }
