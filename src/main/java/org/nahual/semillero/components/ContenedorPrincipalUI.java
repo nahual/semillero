@@ -1,10 +1,8 @@
 package org.nahual.semillero.components;
 
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.ClassResource;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
-import org.nahual.semillero.model.Postulacion;
 import org.nahual.semillero.views.*;
 
 
@@ -38,6 +36,7 @@ public class ContenedorPrincipalUI extends CustomComponent {
         ThemeResource resource = new ThemeResource("img/logo.png");
         Image image = new Image("", resource);
         logo.addComponent(image);
+        logo.setStyleName("imageLogo");
         Label tituloEmpleadores = new Label("Semillero");
         tituloEmpleadores.setStyleName("tituloLogo");
         logo.addComponent(tituloEmpleadores);
