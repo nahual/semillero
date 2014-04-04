@@ -9,19 +9,24 @@
   @include reindeer;
 
   .titulo {
-    font-size: 30px;
+    font-size: 20px;
     color: forestgreen;
-    line-height: 30px;
+    //border-bottom: 1px solid #000000;
   }
 
   .barraMenu .v-menubar-menuitem {
     cursor: pointer;
   }
 
+  .imageLogo img {
+    width: 50px;
+    margin-right: 5px;
+  }
+
   .tituloLogo {
-    font-size: 40px;
+    font-size: 25px;
     color: forestgreen;
-    line-height: 40px;
+    //line-height: 40px;
   }
 
   .v-caption-textField {
