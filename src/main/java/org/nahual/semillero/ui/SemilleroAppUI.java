@@ -17,6 +17,8 @@ import javax.servlet.annotation.WebServlet;
 @SuppressWarnings("serial")
 public class SemilleroAppUI extends UI {
 
+    public static final String LOGGED_IN_SESSION_ID = "logged_in";
+
     private Navigator navigator;
     private ContenedorPrincipalUI marco;
 
@@ -32,15 +34,13 @@ public class SemilleroAppUI extends UI {
 
     @Override
     protected void init(VaadinRequest request) {
-        buildLoginView();
-        setContent(loginLayout);
+        checkLogin(request);
     }
 
     private void showSemillero() {
         getPage().setTitle("Semillero");
         marco = new ContenedorPrincipalUI();
         setContent(marco);
-        setSizeFull();
         navigator = new Navigator(this, marco.getBody());
         marco.setNavigator(navigator);
         marco.setupMenu();
@@ -79,22 +79,28 @@ public class SemilleroAppUI extends UI {
         button.addClickListener(new Button.ClickListener() {
             public void buttonClick(Button.ClickEvent event) {
                 checkPass();
-                //if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
-                //    showSemillero();
-                //} else {
-                //    new Notification("El usuario y contraseña no son válidos", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
-                //}
             }
         });
+        setContent(loginLayout);
 
     }
 
     protected void checkPass(){
         if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
+            getSession().setAttribute(LOGGED_IN_SESSION_ID,true);
             showSemillero();
         } else {
             new Notification("El usuario y contraseña no son válidos", Notification.Type.ERROR_MESSAGE).show(Page.getCurrent());
         }
+    }
+
+    private void checkLogin(VaadinRequest request) {
+        if (getSession().getAttribute(LOGGED_IN_SESSION_ID) == null) {
+            buildLoginView();
+        } else {
+            showSemillero();
+        }
+        setSizeFull();
     }
 
     public Navigator getNavigator() {
