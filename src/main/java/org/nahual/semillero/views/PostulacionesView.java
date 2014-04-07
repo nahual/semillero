@@ -2,13 +2,11 @@ package org.nahual.semillero.views;
 
 
 import com.vaadin.data.Property;
-import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.*;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Busqueda;
@@ -26,8 +24,19 @@ import java.util.ArrayList;
 
 public class PostulacionesView extends VerticalLayout implements View {
 
-    private static final String CONTAINER_FILTER_ACTIVA = "activa";
-    private static final String CONTAINER_FILTER_EGRESADO = "egresado";
+    public static final String COLUMN_ACTIVA = "activa";
+    public static final String COLUMN_EGRESADO = "egresado";
+    public static final String COLUMN_EMPLEADOR = "empleador";
+    public static final String COLUMN_DESCRIPCION = "descripcion";
+    public static final String COLUMN_EXITOSA = "exitosa";
+    public static final String COLUMN_ACCIONES = "acciones";
+
+    private static final String CONTAINER_FILTER_ACTIVA = COLUMN_ACTIVA;
+    private static final String CONTAINER_FILTER_EGRESADO = COLUMN_EGRESADO;
+
+    public static final String CRUD_TABLE_WIDTH = "90%";
+    public static final String COLUMN_BUSQUEDA = "busqueda";
+
 
     private StsHbnContainer<Postulacion> hbn;
     private Egresado egresado;
@@ -50,7 +59,6 @@ public class PostulacionesView extends VerticalLayout implements View {
         this.removeAllComponents();
         final VerticalLayout layout = new VerticalLayout();
         final HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("50%");
 
         Label tituloPostulaciones = new Label("Postulaciones");
         tituloPostulaciones.setStyleName("titulo");
@@ -76,18 +84,18 @@ public class PostulacionesView extends VerticalLayout implements View {
 
         /* Tabla de postulaciones */
         final Table table = new Table();
-        table.setWidth("75%");
+        table.setWidth(CRUD_TABLE_WIDTH);
 
         table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"descripcion"});
 
-        table.addGeneratedColumn("egresado", new Table.ColumnGenerator() {
+        table.addGeneratedColumn(COLUMN_EGRESADO, new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 return hbn.getItem(itemId).getPojo().getEgresado().getNombre();
             }
         });
-        table.addGeneratedColumn("empleador", new Table.ColumnGenerator() {
+
+        table.addGeneratedColumn(COLUMN_EMPLEADOR, new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 Empleador empleador = hbn.getItem(itemId).getPojo().getEmpleador();
@@ -96,7 +104,15 @@ public class PostulacionesView extends VerticalLayout implements View {
                 return null;
             }
         });
-        table.addGeneratedColumn("busqueda", new Table.ColumnGenerator() {
+
+        table.addGeneratedColumn(COLUMN_DESCRIPCION, new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, Object itemId, Object columnId) {
+                return hbn.getItem(itemId).getPojo().getDescripcion();
+            }
+        });
+
+        table.addGeneratedColumn(COLUMN_BUSQUEDA, new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 Busqueda busqueda = hbn.getItem(itemId).getPojo().getBusqueda();
@@ -106,7 +122,7 @@ public class PostulacionesView extends VerticalLayout implements View {
             }
         });
 
-        table.addGeneratedColumn("activa", new Table.ColumnGenerator() {
+        table.addGeneratedColumn(COLUMN_ACTIVA, new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, final Object itemId, Object columnId) {
                 final CheckBox activo = new CheckBox("");
@@ -131,7 +147,7 @@ public class PostulacionesView extends VerticalLayout implements View {
             }
         });
 
-        table.addGeneratedColumn("exitosa", new Table.ColumnGenerator() {
+        table.addGeneratedColumn(COLUMN_EXITOSA, new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, final Object itemId, Object columnId) {
                 final CheckBox exitosa = new CheckBox("");
@@ -156,13 +172,13 @@ public class PostulacionesView extends VerticalLayout implements View {
             }
         });
 
-        table.addGeneratedColumn("Acciones", new Table.ColumnGenerator() {
+        table.addGeneratedColumn(COLUMN_ACCIONES, new Table.ColumnGenerator() {
 
             @Override
             public Object generateCell(final Table source, final Object itemId, Object columnId) {
                 HorizontalLayout cell = new HorizontalLayout();
 
-                Button nuevaObservacionButton = new Button("");
+                Button nuevaObservacionButton = new Button();
                 nuevaObservacionButton.setDescription("Agregar feedback");
                 nuevaObservacionButton.addClickListener(new Button.ClickListener() {
 
@@ -178,17 +194,13 @@ public class PostulacionesView extends VerticalLayout implements View {
                         window.setWidth("350px");
                         feedbackView.setWindow(window);
                         window.setContent(feedbackView);
-
-
-
                     }
                 });
                 nuevaObservacionButton.setStyleName("iconButton");
                 nuevaObservacionButton.setIcon(new ThemeResource("img/agregar_observacion.png"), "Agregar feedback");
                 cell.addComponent(nuevaObservacionButton);
 
-                Button verFeedbacksButton = new Button("Ver Feedbacks");
-
+                Button verFeedbacksButton = new Button();
                 verFeedbacksButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -213,6 +225,8 @@ public class PostulacionesView extends VerticalLayout implements View {
                 return cell;
             }
         });
+
+        table.setVisibleColumns(COLUMN_ACTIVA, COLUMN_EGRESADO, COLUMN_EMPLEADOR, COLUMN_BUSQUEDA, COLUMN_DESCRIPCION, COLUMN_EXITOSA, COLUMN_ACCIONES);
 
         activaCB = new CheckBox("Mostrar solo postulaciones activas");
         activaCB.addStyleName("margins");
@@ -265,7 +279,7 @@ public class PostulacionesView extends VerticalLayout implements View {
     }
 
     private void cargarEgresados() {
-        StsHbnContainer<Egresado> hbn = new StsHbnContainer<Egresado>(Egresado.class, SpringHelper.getBean("sessionFactory", SessionFactory.class));
+        StsHbnContainer<Egresado> hbn = new StsHbnContainer<Egresado>(Egresado.class, SpringHelper.getSession());
 
         ArrayList ids = (ArrayList) hbn.getItemIds();
         for (Object id : ids) {
