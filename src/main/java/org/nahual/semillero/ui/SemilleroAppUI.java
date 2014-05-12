@@ -4,7 +4,6 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.navigator.Navigator;
-import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
@@ -23,7 +22,7 @@ public class SemilleroAppUI extends UI {
     private ContenedorPrincipalUI marco;
 
     private VerticalLayout loginLayout;
-    private TextField usuarioTF;
+    private TextField usuario;
     private PasswordField password;
     private FormLayout fl;
 
@@ -54,15 +53,15 @@ public class SemilleroAppUI extends UI {
         fl = new FormLayout();
         loginLayout.addComponent(fl);
 
-        usuarioTF = new TextField("Usuario");
-        usuarioTF.setRequired(true);
-        usuarioTF.addShortcutListener(new AbstractField.FocusShortcut(password, ShortcutAction.KeyCode.ENTER, null) {
+        usuario = new TextField("Usuario");
+        usuario.setRequired(true);
+        usuario.addShortcutListener(new AbstractField.FocusShortcut(password, ShortcutAction.KeyCode.ENTER, null) {
             @Override
             public void handleAction(Object sender, Object target) {
                 checkPass();
             }
         });
-        fl.addComponent(usuarioTF);
+        fl.addComponent(usuario);
 
         password = new PasswordField("Contraseña");
         password.setRequired(true);
@@ -86,7 +85,7 @@ public class SemilleroAppUI extends UI {
     }
 
     protected void checkPass(){
-        if (usuarioTF.getValue().equals("semillero") && password.getValue().equals("nahual")) {
+        if (usuario.getValue().equals("semillero") && password.getValue().equals("nahual")) {
             getSession().setAttribute(LOGGED_IN_SESSION_ID,true);
             showSemillero();
         } else {
@@ -95,11 +94,11 @@ public class SemilleroAppUI extends UI {
     }
 
     private void checkLogin(VaadinRequest request) {
-        if (getSession().getAttribute(LOGGED_IN_SESSION_ID) == null) {
-            buildLoginView();
-        } else {
+//        if (getSession().getAttribute(LOGGED_IN_SESSION_ID) == null) {
+//            buildLoginView();
+//        } else {
             showSemillero();
-        }
+        //}
         setSizeFull();
     }
 
