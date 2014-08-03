@@ -94,11 +94,11 @@ public class SemilleroAppUI extends UI {
     }
 
     private void checkLogin(VaadinRequest request) {
-//        if (getSession().getAttribute(LOGGED_IN_SESSION_ID) == null) {
-//            buildLoginView();
-//        } else {
+        if (getSession().getAttribute(LOGGED_IN_SESSION_ID) == null) {
+            buildLoginView();
+        } else {
             showSemillero();
-        //}
+        }
         setSizeFull();
     }
 
