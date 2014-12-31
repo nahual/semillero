@@ -233,28 +233,23 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-			<!--<plugin>
+			<plugin>
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
 				<version>${vaadin.plugin.version}</version>
 				<configuration>
 					<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
-					&lt;!&ndash; <runTarget>mobilemail</runTarget> &ndash;&gt;
-					&lt;!&ndash; We are doing "inplace" but into subdir VAADIN/widgetsets. This
-						way compatible with Vaadin eclipse plugin. &ndash;&gt;
-					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets
-					</webappDirectory>
-					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets
-					</hostedWebapp>
+					<webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
+					<hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
 					<noServer>true</noServer>
-					&lt;!&ndash; Remove draftCompile when project is ready &ndash;&gt;
+					<!--Remove draftCompile when project is ready-->
 					<draftCompile>false</draftCompile>
 					<compileReport>true</compileReport>
 					<style>OBF</style>
 					<strict>true</strict>
 					<runTarget>http://localhost:8080/</runTarget>
 				</configuration>
-				<executions>
+				<!--<executions>
 					<execution>
 						<configuration>
 							&lt;!&ndash; if you don't specify any modules, the plugin will find them &ndash;&gt;
@@ -270,8 +265,8 @@
 							<goal>compile</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>-->
+				</executions>-->
+			</plugin>
 		</plugins>
 
 	</build>
