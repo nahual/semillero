@@ -1,11 +1,14 @@
 package org.nahual.utils;
 
 
+import org.apache.log4j.Logger;
 import org.nahual.semillero.model.Egresado;
 
 import java.io.File;
 
 public class CvUtils {
+
+    Logger LOGGER = Logger.getLogger(CvUtils.class);
 
     private String absolutePath = new File("").getAbsolutePath();
 
@@ -16,21 +19,25 @@ public class CvUtils {
 
     /* Ubicación del directorio donde se guardan todos los cvs */
     public String getCvRootPath() {
-        return absolutePath + cvFolder;
+        String path = absolutePath + cvFolder;
+        LOGGER.debug("CV Root Path -->" + path);
+        return path;
     }
 
     /* Ubicación del directorio temporal */
     public String getTmpPath() {
         String tmpPath = getCvRootPath() + tmpFolder;
-
+        LOGGER.debug("CV Tmp Path -->" + tmpPath);
         return tmpPath;
     }
 
     /* Ubicación del cv del egresado */
     public String getCvPath(Egresado egresado) {
-        if (egresado != null)
-            return getCvRootPath() + "/" + egresado.getId().toString() + "/" + egresado.getCv();
-
+        if (egresado != null) {
+            String cvEgresadoPath = getCvRootPath() + "/" + egresado.getId().toString() + "/" + egresado.getCv();
+            LOGGER.debug("CV Egresado Path --> " + cvEgresadoPath);
+            return cvEgresadoPath;
+        }
         throw null;
     }
 
