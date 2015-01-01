@@ -170,19 +170,21 @@ public class EgresadosView extends VerticalLayout implements View {
                     }
                 });
 
-                cell.addComponent(postulacionesActivas);
                 postulacionesActivas.setStyleName("iconButton");
                 postulacionesActivas.setIcon(new ThemeResource("img/postulacion.png"), "Postulaciones activas");
+                postulacionesActivas.setDescription("Postulaciones activas");
+                cell.addComponent(postulacionesActivas);
 
                 final Button descargarCV = new Button();
-                postulacionesActivas.setDescription("Descargar CV");
+
                 Egresado egresado = hbn.getItem(itemId).getPojo();
                 CvDownloader fileDownloader = new CvDownloader(egresado);
                 fileDownloader.extend(descargarCV);
 
-                cell.addComponent(descargarCV);
                 descargarCV.setStyleName("iconButton");
+                descargarCV.setDescription("Descargar CV");
                 descargarCV.setIcon(new ThemeResource("img/descarga.png"), "Descargar CV");
+                cell.addComponent(descargarCV);
 
                 return cell;
             }
