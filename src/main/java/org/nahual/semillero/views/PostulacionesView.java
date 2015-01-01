@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 public class PostulacionesView extends VerticalLayout implements View {
 
+    public static final String COLUMNA_FECHA = "fecha";
     public static final String COLUMN_ACTIVA = "activa";
     public static final String COLUMN_EGRESADO = "egresado";
     public static final String COLUMN_EMPLEADOR = "empleador";
@@ -55,6 +56,7 @@ public class PostulacionesView extends VerticalLayout implements View {
 
     private void init() {
         hbn = new StsHbnContainer<Postulacion>(Postulacion.class, SpringHelper.getSession());
+        hbn.sort(new String[]{"fecha"}, new boolean[]{false});
 
         this.removeAllComponents();
         final VerticalLayout layout = new VerticalLayout();
@@ -109,6 +111,13 @@ public class PostulacionesView extends VerticalLayout implements View {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
                 return hbn.getItem(itemId).getPojo().getDescripcion();
+            }
+        });
+
+        table.addGeneratedColumn(COLUMNA_FECHA, new Table.ColumnGenerator() {
+            @Override
+            public Object generateCell(Table source, Object itemId, Object columnId) {
+                return hbn.getItem(itemId).getPojo().getFecha();
             }
         });
 
@@ -201,6 +210,7 @@ public class PostulacionesView extends VerticalLayout implements View {
                 cell.addComponent(nuevaObservacionButton);
 
                 Button verFeedbacksButton = new Button();
+                verFeedbacksButton.setDescription("Ver feedback");
                 verFeedbacksButton.addClickListener(new Button.ClickListener() {
 
                     @Override
@@ -226,7 +236,7 @@ public class PostulacionesView extends VerticalLayout implements View {
             }
         });
 
-        table.setVisibleColumns(COLUMN_ACTIVA, COLUMN_EGRESADO, COLUMN_EMPLEADOR, COLUMN_BUSQUEDA, COLUMN_DESCRIPCION, COLUMN_EXITOSA, COLUMN_ACCIONES);
+        table.setVisibleColumns(COLUMNA_FECHA, COLUMN_ACTIVA, COLUMN_EGRESADO, COLUMN_EMPLEADOR, COLUMN_BUSQUEDA, COLUMN_DESCRIPCION, COLUMN_EXITOSA, COLUMN_ACCIONES);
 
         activaCB = new CheckBox("Mostrar solo postulaciones activas");
         activaCB.addStyleName("margins");

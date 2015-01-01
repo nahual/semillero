@@ -29,6 +29,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 
 public class PostulacionView extends VerticalLayout implements View {
@@ -63,6 +64,7 @@ public class PostulacionView extends VerticalLayout implements View {
         Postulacion postulacion = new Postulacion();
         postulacion.setEgresado(unEgresado);
         postulacion.setActiva(true);
+        postulacion.setFecha(new Date());
         Item newItem = new BeanItem<Postulacion>(postulacion);
         this.nuevoItem = true;
         setElemento(newItem);

@@ -2,6 +2,7 @@ package org.nahual.semillero.model;
 
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -32,6 +33,9 @@ public class Postulacion {
 
     @Column(name = "DESCRIPCION")
     private String descripcion;
+
+    @Column(name = "FECHA")
+    private Date fecha;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable
@@ -102,5 +106,13 @@ public class Postulacion {
 
     public void setFeedbacks(Set<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 }
