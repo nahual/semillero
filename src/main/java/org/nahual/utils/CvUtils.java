@@ -1,16 +1,18 @@
 package org.nahual.utils;
 
 
-import org.apache.log4j.Logger;
+
 import org.nahual.semillero.model.Egresado;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 public class CvUtils {
 
-    Logger LOGGER = Logger.getLogger(CvUtils.class);
+    Logger LOGGER = LoggerFactory.getLogger(CvUtils.class);
 
-    private String absolutePath = new File("").getAbsolutePath();
+    private String absolutePath = new File(System.getProperty("catalina.home"), "uploads").getAbsolutePath();
 
     /* Estos datos son cargados desde el archivo config.local.properties */
     private String tmpFolder;
