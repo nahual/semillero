@@ -2,10 +2,7 @@ package org.nahual.semillero.views;
 
 
 import com.vaadin.data.Property;
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.converter.StringToDateConverter;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.navigator.View;
@@ -15,7 +12,6 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
-import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.model.Busqueda;
 import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
@@ -39,7 +35,7 @@ public class BusquedasView extends VerticalLayout implements View {
 
     private StsHbnContainer<Busqueda> hbn;
     private Empleador empleador;
-    private ComboBox combo;
+    private ComboBox comboEmpleadores;
     private CheckBox activaCB;
     private Date fechaInicio;
     private DateField fechaInicioDF;
@@ -72,26 +68,27 @@ public class BusquedasView extends VerticalLayout implements View {
         topLayout.setWidth("100%");
         layout.addComponent(filtros);
 
-        combo = new ComboBox("Empleador");
-        combo.addStyleName("margins");
+        comboEmpleadores = new ComboBox("Empleador");
+        comboEmpleadores.addStyleName("margins");
         this.cargarEmpleadores();
-        combo.setTextInputAllowed(false);
-        combo.setImmediate(true);
-        combo.addValueChangeListener(new Property.ValueChangeListener() {
+        comboEmpleadores.setTextInputAllowed(false);
+        comboEmpleadores.setImmediate(true);
+        comboEmpleadores.addValueChangeListener(new Property.ValueChangeListener() {
             @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 empleador = (Empleador) ((ComboBox) ((Field.ValueChangeEvent) event).getComponent()).getValue();
                 cambiarEmpleador();
             }
         });
-        filtros.addComponent(combo);
+        filtros.addComponent(comboEmpleadores);
 
 
         /* Tabla de empleadores */
         final Table table = new Table();
-        table.setWidth("50%");
+        table.setWidth("90%");
 
         hbn = new StsHbnContainer<Busqueda>(Busqueda.class, SpringHelper.getSession());
+        hbn.sort(new String[]{"fechaInicio"}, new boolean[]{false});
 
         hbn.addContainerFilter(new StsContainerFilter("filtro_empleado_activo") {
             @Override
@@ -102,7 +99,7 @@ public class BusquedasView extends VerticalLayout implements View {
         });
 
         table.setContainerDataSource(hbn);
-        table.setVisibleColumns(new Object[]{"titulo", "descripcion", "fechaInicio", "fechaFin", "activa"});
+        table.setVisibleColumns(new Object[]{"activa", "fechaInicio", "fechaFin", "titulo", "descripcion"});
         table.addGeneratedColumn("empresa", new Table.ColumnGenerator() {
             @Override
             public Object generateCell(Table source, Object itemId, Object columnId) {
@@ -144,7 +141,7 @@ public class BusquedasView extends VerticalLayout implements View {
         table.setConverter("fechaFin", converter);
 
         if (empleador != null)
-            combo.setValue(empleador);
+            comboEmpleadores.setValue(empleador);
 
         activaCB = new CheckBox("Mostrar solo Busquedas Activas");
         activaCB.addStyleName("margins");
@@ -226,7 +223,7 @@ public class BusquedasView extends VerticalLayout implements View {
         ArrayList ids = (ArrayList) hbn.getItemIds();
         for (Object id : ids) {
             if (hbn.getItem(id).getPojo().getActivo())
-                combo.addItem((hbn.getItem(id).getPojo()));
+                comboEmpleadores.addItem((hbn.getItem(id).getPojo()));
         }
     }
 
