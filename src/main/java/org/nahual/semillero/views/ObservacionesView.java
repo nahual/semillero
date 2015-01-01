@@ -60,7 +60,7 @@ public class ObservacionesView extends VerticalLayout implements View{
         table.setContainerDataSource(beanItemContainer);
         table.setColumnHeaders(new String[]{"Fecha", "Observación"});
         table.setSortContainerPropertyId("fecha");
-        table.setSortAscending(true);
+        table.setSortAscending(false);
         table.sort();
 
         table.setStyleName("wordwrap-table");
