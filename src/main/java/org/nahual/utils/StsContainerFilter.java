@@ -2,12 +2,12 @@ package org.nahual.utils;
 
 import com.vaadin.data.Container;
 import com.vaadin.data.Item;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.collections.Predicate;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.internal.CriteriaImpl;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Iterator;
 

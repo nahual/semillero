@@ -3,7 +3,9 @@ package org.nahual.utils;
 
 import com.vaadin.data.hbnutil.ContainerFilter;
 import com.vaadin.data.hbnutil.HbnContainer;
-import com.vaadin.server.*;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.Page;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Notification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;

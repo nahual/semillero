@@ -8,7 +8,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.nahual.semillero.model.Busqueda;
-import org.nahual.semillero.model.Empleador;
 import org.nahual.utils.SpringHelper;
 
 import java.util.ArrayList;
