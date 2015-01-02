@@ -1,27 +1,24 @@
 package org.nahual.semillero.views;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Validator;
 import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.hbnutil.HbnContainer;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.*;
 import org.hibernate.SessionFactory;
-import org.nahual.semillero.components.ContenedorPrincipalUI;
 import org.nahual.semillero.converters.SemilleroConverterFactory;
 import org.nahual.semillero.model.Busqueda;
-import org.nahual.semillero.model.Egresado;
 import org.nahual.semillero.model.Empleador;
-import org.nahual.semillero.model.Postulacion;
 import org.nahual.utils.SpringHelper;
 import org.nahual.utils.StsHbnContainer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.Collection;
+import java.util.Date;
 
 public class BusquedaView extends VerticalLayout implements View {
     private String title;
@@ -111,6 +108,21 @@ public class BusquedaView extends VerticalLayout implements View {
         fl.addComponent(fechaInicioDF);
         fechaInicioDF.setRequired(true);
         fechaInicioDF.setRequiredError("Fecha Inicio no puede estar vacio");
+
+        Validator inicioMenosAFinValidator = new Validator() {
+            @Override
+            public void validate(Object value) throws InvalidValueException {
+                Date fechaFin = (Date)fechaFinDF.getConvertedValue();
+                Date fechaInicio = (Date) fechaInicioDF.getConvertedValue();
+                if (fechaFin != null && fechaInicio != null) {
+                    if (fechaInicio.getTime() > fechaFin.getTime()) {
+                        throw new InvalidValueException("Fecha de fin debe ser mayor a fecha de inicio");
+                    }
+                }
+            }
+        };
+
+        fechaInicioDF.addValidator(inicioMenosAFinValidator);
 
         fechaFinDF = new DateField("Fecha Fin");
         fl.addComponent(fechaFinDF);
